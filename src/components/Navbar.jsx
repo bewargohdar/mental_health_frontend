@@ -83,6 +83,97 @@ export default function Navbar() {
                         <LanguageSwitcher />
                         <ThemeToggle />
 
+                        {/* Notifications Bell */}
+                        {isAuthenticated && (
+                            <div className="relative" ref={notificationRef}>
+                                <button
+                                    onClick={() => setShowNotifications(!showNotifications)}
+                                    className="relative p-2 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
+                                >
+                                    <Bell className="w-5 h-5" />
+                                    {unreadCount > 0 && (
+                                        <span className="absolute -top-1 -end-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                            {unreadCount > 9 ? '9+' : unreadCount}
+                                        </span>
+                                    )}
+                                </button>
+
+                                {/* Notification Dropdown */}
+                                {showNotifications && (
+                                    <div className="absolute end-0 top-full mt-2 w-80 bg-[var(--surface)] rounded-xl shadow-xl border border-[var(--border)] overflow-hidden z-50">
+                                        <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
+                                            <h3 className="font-semibold text-[var(--text-primary)]">
+                                                {t('nav.notifications') || 'Notifications'}
+                                            </h3>
+                                            {unreadCount > 0 && (
+                                                <button
+                                                    onClick={markAllAsRead}
+                                                    className="text-xs text-[var(--primary)] hover:underline flex items-center gap-1"
+                                                >
+                                                    <CheckCheck className="w-3 h-3" />
+                                                    Mark all read
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="max-h-80 overflow-y-auto">
+                                            {loading ? (
+                                                <div className="p-4 text-center text-[var(--text-muted)]">
+                                                    Loading...
+                                                </div>
+                                            ) : notifications.length === 0 ? (
+                                                <div className="p-8 text-center">
+                                                    <Bell className="w-12 h-12 mx-auto text-[var(--text-muted)] opacity-50 mb-3" />
+                                                    <p className="text-sm text-[var(--text-muted)]">No notifications yet</p>
+                                                </div>
+                                            ) : (
+                                                notifications.slice(0, 10).map((notification) => {
+                                                    const IconComponent = notificationIcons[notification.type] || notificationIcons.default;
+                                                    const isUnread = !notification.read_at;
+                                                    return (
+                                                        <div
+                                                            key={notification.id}
+                                                            onClick={() => {
+                                                                if (isUnread) markAsRead(notification.id);
+                                                            }}
+                                                            className={`p-4 border-b border-[var(--border)] hover:bg-[var(--surface-hover)] cursor-pointer transition-colors ${isUnread ? 'bg-[var(--primary)]/5' : ''}`}
+                                                        >
+                                                            <div className="flex gap-3">
+                                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isUnread ? 'bg-[var(--primary)]/20 text-[var(--primary)]' : 'bg-[var(--light-gray)] text-[var(--text-muted)]'}`}>
+                                                                    <IconComponent className="w-5 h-5" />
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <p className={`text-sm ${isUnread ? 'font-medium text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}`}>
+                                                                        {notification.data?.message || notification.message || 'New notification'}
+                                                                    </p>
+                                                                    <p className="text-xs text-[var(--text-muted)] mt-1">
+                                                                        {new Date(notification.created_at).toLocaleDateString()}
+                                                                    </p>
+                                                                </div>
+                                                                {isUnread && (
+                                                                    <div className="w-2 h-2 bg-[var(--primary)] rounded-full flex-shrink-0 mt-2"></div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            )}
+                                        </div>
+                                        {notifications.length > 10 && (
+                                            <div className="p-3 border-t border-[var(--border)] text-center">
+                                                <Link
+                                                    to="/notifications"
+                                                    onClick={() => setShowNotifications(false)}
+                                                    className="text-sm text-[var(--primary)] hover:underline"
+                                                >
+                                                    View all notifications
+                                                </Link>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         <div className="w-px h-6 bg-[var(--border)] mx-2"></div>
 
                         {isAuthenticated ? (
