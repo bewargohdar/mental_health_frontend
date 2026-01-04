@@ -63,6 +63,68 @@ export default function Community() {
         }
     };
 
+    const fetchMyPosts = async () => {
+        try {
+            const res = await api.get('/posts/my-posts');
+            setMyPosts(res.data.data?.data || res.data.data || []);
+        } catch (error) {
+            console.error('Failed to fetch my posts:', error);
+            // For demo, filter posts by current user
+            setMyPosts([]);
+        }
+    };
+
+    const openEditModal = (post) => {
+        setEditingPost(post);
+        setEditForm({ title: post.title, content: post.content });
+    };
+
+    const handleEditPost = async () => {
+        if (!editingPost || !editForm.title || !editForm.content) return;
+        setSaving(true);
+        try {
+            await api.put(`/posts/${editingPost.id}`, editForm);
+            setEditingPost(null);
+            fetchPosts();
+            if (isAuthenticated) fetchMyPosts();
+        } catch (error) {
+            console.error('Failed to update post:', error);
+            // For demo, update locally
+            setPosts(prev => prev.map(p =>
+                p.id === editingPost.id ? { ...p, ...editForm } : p
+            ));
+            setMyPosts(prev => prev.map(p =>
+                p.id === editingPost.id ? { ...p, ...editForm } : p
+            ));
+            setEditingPost(null);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleDeletePost = async () => {
+        if (!deletingPost) return;
+        setSaving(true);
+        try {
+            await api.delete(`/posts/${deletingPost.id}`);
+            setDeletingPost(null);
+            fetchPosts();
+            if (isAuthenticated) fetchMyPosts();
+        } catch (error) {
+            console.error('Failed to delete post:', error);
+            // For demo, remove locally
+            setPosts(prev => prev.filter(p => p.id !== deletingPost.id));
+            setMyPosts(prev => prev.filter(p => p.id !== deletingPost.id));
+            setDeletingPost(null);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const isOwnPost = (post) => {
+        return user && (post.user_id === user.id || post.user?.id === user.id);
+    };
+
     const fetchComments = async (postId) => {
         setCommentLoading(true);
         try {
@@ -199,188 +261,217 @@ export default function Community() {
             </div>
 
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Tab Switcher */}
+                {isAuthenticated && (
+                    <div className="flex gap-2 mb-6">
+                        <button
+                            onClick={() => setActiveTab('all')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === 'all'
+                                ? 'bg-[var(--primary)] text-white'
+                                : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
+                                }`}
+                        >
+                            <Users className="w-4 h-4" />
+                            All Posts
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('my')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === 'my'
+                                ? 'bg-[var(--primary)] text-white'
+                                : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
+                                }`}
+                        >
+                            <UserCircle className="w-4 h-4" />
+                            My Posts ({myPosts.length})
+                        </button>
+                    </div>
+                )}
+
                 <div className="flex gap-8">
                     {/* Posts Feed */}
                     <div className={`flex-1 ${showChat ? 'hidden lg:block' : ''}`}>
-                        {loading ? (
-                            <div className="space-y-6">
-                                {[1, 2, 3].map((i) => (
-                                    <div key={i} className="card p-6 animate-pulse">
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="w-12 h-12 bg-[var(--light-gray)] rounded-full" />
-                                            <div>
-                                                <div className="h-4 bg-[var(--light-gray)] rounded w-32 mb-2" />
-                                                <div className="h-3 bg-[var(--light-gray)] rounded w-20" />
-                                            </div>
-                                        </div>
-                                        <div className="h-4 bg-[var(--light-gray)] rounded w-3/4 mb-2" />
-                                        <div className="h-4 bg-[var(--light-gray)] rounded w-1/2" />
-                                    </div>
-                                ))}
-                            </div>
-                        ) : posts.length > 0 ? (
-                            <div className="space-y-6">
-                                {posts.map((post) => (
-                                    <div key={post.id} className="card p-6">
-                                        {/* Author */}
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white">
-                                                    {post.is_anonymous ? (
-                                                        <EyeOff className="w-5 h-5" />
-                                                    ) : (
-                                                        <span className="text-lg font-semibold">
-                                                            {post.user?.name?.charAt(0) || 'A'}
-                                                        </span>
-                                                    )}
-                                                </div>
+                        {(() => {
+                            const displayedPosts = activeTab === 'my' ? myPosts : posts;
+
+                            if (loading) return (
+                                <div className="space-y-6">
+                                    {[1, 2, 3].map((i) => (
+                                        <div key={i} className="card p-6 animate-pulse">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="w-12 h-12 bg-[var(--light-gray)] rounded-full" />
                                                 <div>
-                                                    <div className="flex items-center gap-2">
-                                                        <p className="font-semibold text-[var(--text-primary)]">
-                                                            {post.is_anonymous ? 'Anonymous' : post.user?.name || 'User'}
-                                                        </p>
-                                                        {post.is_anonymous && (
-                                                            <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--light-gray)] text-[var(--text-muted)]">
-                                                                Anonymous
+                                                    <div className="h-4 bg-[var(--light-gray)] rounded w-32 mb-2" />
+                                                    <div className="h-3 bg-[var(--light-gray)] rounded w-20" />
+                                                </div>
+                                            </div>
+                                            <div className="h-4 bg-[var(--light-gray)] rounded w-3/4 mb-2" />
+                                            <div className="h-4 bg-[var(--light-gray)] rounded w-1/2" />
+                                        </div>
+                                    ))}
+                                </div>
+                            );
+
+                            if (displayedPosts.length === 0) return (
+                                <div className="text-center py-16 card">
+                                    <div className="text-6xl mb-4">📝</div>
+                                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                                        {activeTab === 'my' ? 'No posts yet' : 'No posts in community'}
+                                    </h3>
+                                    <p className="text-[var(--text-secondary)]">
+                                        {activeTab === 'my' ? 'Share your thoughts with the community' : 'Be the first to share'}
+                                    </p>
+                                </div>
+                            );
+
+                            return (
+                                <div className="space-y-6">
+                                    {displayedPosts.map((post) => (
+                                        <div key={post.id} className="card p-6">
+                                            {/* Author */}
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-12 h-12 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white">
+                                                        {post.is_anonymous ? (
+                                                            <EyeOff className="w-5 h-5" />
+                                                        ) : (
+                                                            <span className="text-lg font-semibold">
+                                                                {post.user?.name?.charAt(0) || 'A'}
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <p className="text-sm text-[var(--text-muted)]">
-                                                        {new Date(post.created_at).toLocaleDateString()}
-                                                    </p>
+                                                    <div>
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="font-semibold text-[var(--text-primary)]">
+                                                                {post.is_anonymous ? 'Anonymous' : post.user?.name || 'User'}
+                                                            </p>
+                                                            {post.is_anonymous && (
+                                                                <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--light-gray)] text-[var(--text-muted)]">
+                                                                    Anonymous
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <p className="text-sm text-[var(--text-muted)]">
+                                                            {new Date(post.created_at).toLocaleDateString()}
+                                                        </p>
+                                                    </div>
                                                 </div>
+                                                <button className="p-2 hover:bg-[var(--surface-hover)] rounded-full transition-colors">
+                                                    <MoreHorizontal className="w-5 h-5 text-[var(--text-muted)]" />
+                                                </button>
                                             </div>
-                                            <button className="p-2 hover:bg-[var(--surface-hover)] rounded-full transition-colors">
-                                                <MoreHorizontal className="w-5 h-5 text-[var(--text-muted)]" />
-                                            </button>
-                                        </div>
 
-                                        {/* Content */}
-                                        <h3 className="font-semibold text-lg text-[var(--text-primary)] mb-2">{post.title}</h3>
-                                        <p className="text-[var(--text-secondary)] mb-4">{post.content}</p>
+                                            {/* Content */}
+                                            <h3 className="font-semibold text-lg text-[var(--text-primary)] mb-2">{post.title}</h3>
+                                            <p className="text-[var(--text-secondary)] mb-4">{post.content}</p>
 
-                                        {/* Actions */}
-                                        <div className="flex items-center gap-6 pt-4 border-t border-[var(--border)]">
-                                            <button
-                                                onClick={() => handleLike(post.id)}
-                                                className="flex items-center gap-2 text-[var(--text-muted)] hover:text-red-500 transition-colors"
-                                            >
-                                                <Heart className={`w-5 h-5 ${post.likes_count > 0 ? 'fill-red-500 text-red-500' : ''}`} />
-                                                <span className="text-sm">{post.likes_count || 0}</span>
-                                            </button>
-                                            <button
-                                                onClick={() => handleToggleComments(post.id)}
-                                                className={`flex items-center gap-2 transition-colors ${expandedPost === post.id ? 'text-[var(--primary)]' : 'text-[var(--text-muted)] hover:text-[var(--primary)]'}`}
-                                            >
-                                                <MessageCircle className="w-5 h-5" />
-                                                <span className="text-sm">{post.comments_count || 0}</span>
-                                                {expandedPost === post.id ? (
-                                                    <ChevronUp className="w-4 h-4" />
-                                                ) : (
-                                                    <ChevronDown className="w-4 h-4" />
-                                                )}
-                                            </button>
-                                        </div>
+                                            {/* Actions */}
+                                            <div className="flex items-center gap-6 pt-4 border-t border-[var(--border)]">
+                                                <button
+                                                    onClick={() => handleLike(post.id)}
+                                                    className="flex items-center gap-2 text-[var(--text-muted)] hover:text-red-500 transition-colors"
+                                                >
+                                                    <Heart className={`w-5 h-5 ${post.likes_count > 0 ? 'fill-red-500 text-red-500' : ''}`} />
+                                                    <span className="text-sm">{post.likes_count || 0}</span>
+                                                </button>
+                                                <button
+                                                    onClick={() => handleToggleComments(post.id)}
+                                                    className={`flex items-center gap-2 transition-colors ${expandedPost === post.id ? 'text-[var(--primary)]' : 'text-[var(--text-muted)] hover:text-[var(--primary)]'}`}
+                                                >
+                                                    <MessageCircle className="w-5 h-5" />
+                                                    <span className="text-sm">{post.comments_count || 0}</span>
+                                                    {expandedPost === post.id ? (
+                                                        <ChevronUp className="w-4 h-4" />
+                                                    ) : (
+                                                        <ChevronDown className="w-4 h-4" />
+                                                    )}
+                                                </button>
+                                            </div>
 
-                                        {/* Comments Section */}
-                                        {expandedPost === post.id && (
-                                            <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                                                {/* Comment Input */}
-                                                {isAuthenticated ? (
-                                                    <div className="flex gap-3 mb-4">
-                                                        <div className="w-8 h-8 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0">
-                                                            {user?.name?.charAt(0) || 'U'}
-                                                        </div>
-                                                        <div className="flex-1 flex gap-2">
-                                                            <input
-                                                                type="text"
-                                                                value={newComment}
-                                                                onChange={(e) => setNewComment(e.target.value)}
-                                                                onKeyPress={(e) => e.key === 'Enter' && handleSubmitComment(post.id)}
-                                                                placeholder={t('community.writeComment') || 'Write a comment...'}
-                                                                className="flex-1 px-4 py-2 input-field rounded-full text-sm"
-                                                            />
-                                                            <button
-                                                                onClick={() => handleSubmitComment(post.id)}
-                                                                disabled={!newComment.trim() || submittingComment}
-                                                                className="p-2 bg-[var(--primary)] text-white rounded-full hover:bg-[var(--primary-dark)] transition-colors disabled:opacity-50"
-                                                            >
-                                                                <Send className="w-4 h-4" />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <div className="mb-4 p-3 bg-[var(--surface-hover)] rounded-lg text-center">
-                                                        <Link to="/login" className="text-[var(--primary)] hover:underline text-sm">
-                                                            {t('community.loginToComment') || 'Log in to comment'}
-                                                        </Link>
-                                                    </div>
-                                                )}
-
-                                                {/* Comments List */}
-                                                {commentLoading ? (
-                                                    <div className="space-y-3">
-                                                        {[1, 2].map((i) => (
-                                                            <div key={i} className="flex gap-3 animate-pulse">
-                                                                <div className="w-8 h-8 bg-[var(--light-gray)] rounded-full" />
-                                                                <div className="flex-1">
-                                                                    <div className="h-3 bg-[var(--light-gray)] rounded w-24 mb-2" />
-                                                                    <div className="h-3 bg-[var(--light-gray)] rounded w-3/4" />
-                                                                </div>
+                                            {/* Comments Section */}
+                                            {expandedPost === post.id && (
+                                                <div className="mt-4 pt-4 border-t border-[var(--border)]">
+                                                    {/* Comment Input */}
+                                                    {isAuthenticated ? (
+                                                        <div className="flex gap-3 mb-4">
+                                                            <div className="w-8 h-8 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0">
+                                                                {user?.name?.charAt(0) || 'U'}
                                                             </div>
-                                                        ))}
-                                                    </div>
-                                                ) : comments[post.id]?.length > 0 ? (
-                                                    <div className="space-y-4">
-                                                        {comments[post.id].map((comment) => (
-                                                            <div key={comment.id} className="flex gap-3">
-                                                                <div className="w-8 h-8 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dark)] rounded-full flex items-center justify-center text-white text-xs flex-shrink-0">
-                                                                    {comment.is_anonymous ? (
-                                                                        <EyeOff className="w-3 h-3" />
-                                                                    ) : (
-                                                                        comment.user?.name?.charAt(0) || 'A'
-                                                                    )}
-                                                                </div>
-                                                                <div className="flex-1 min-w-0">
-                                                                    <div className="flex items-center gap-2 mb-1">
-                                                                        <span className="text-sm font-medium text-[var(--text-primary)]">
-                                                                            {comment.is_anonymous ? 'Anonymous' : comment.user?.name || 'User'}
-                                                                        </span>
-                                                                        <span className="text-xs text-[var(--text-muted)]">
-                                                                            {new Date(comment.created_at).toLocaleDateString()}
-                                                                        </span>
+                                                            <div className="flex-1 flex gap-2">
+                                                                <input
+                                                                    type="text"
+                                                                    value={newComment}
+                                                                    onChange={(e) => setNewComment(e.target.value)}
+                                                                    onKeyPress={(e) => e.key === 'Enter' && handleSubmitComment(post.id)}
+                                                                    placeholder={t('community.writeComment') || 'Write a comment...'}
+                                                                    className="flex-1 px-4 py-2 input-field rounded-full text-sm"
+                                                                />
+                                                                <button
+                                                                    onClick={() => handleSubmitComment(post.id)}
+                                                                    disabled={!newComment.trim() || submittingComment}
+                                                                    className="p-2 bg-[var(--primary)] text-white rounded-full hover:bg-[var(--primary-dark)] transition-colors disabled:opacity-50"
+                                                                >
+                                                                    <Send className="w-4 h-4" />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="mb-4 p-3 bg-[var(--surface-hover)] rounded-lg text-center">
+                                                            <Link to="/login" className="text-[var(--primary)] hover:underline text-sm">
+                                                                {t('community.loginToComment') || 'Log in to comment'}
+                                                            </Link>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Comments List */}
+                                                    {commentLoading ? (
+                                                        <div className="space-y-3">
+                                                            {[1, 2].map((i) => (
+                                                                <div key={i} className="flex gap-3 animate-pulse">
+                                                                    <div className="w-8 h-8 bg-[var(--light-gray)] rounded-full" />
+                                                                    <div className="flex-1">
+                                                                        <div className="h-3 bg-[var(--light-gray)] rounded w-24 mb-2" />
+                                                                        <div className="h-3 bg-[var(--light-gray)] rounded w-3/4" />
                                                                     </div>
-                                                                    <p className="text-sm text-[var(--text-secondary)]">{comment.content}</p>
                                                                 </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <p className="text-sm text-[var(--text-muted)] text-center py-4">
-                                                        {t('community.noComments') || 'No comments yet. Be the first to comment!'}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-16 card">
-                                <div className="text-6xl mb-4">💬</div>
-                                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">{t('community.noPosts')}</h3>
-                                <p className="text-[var(--text-secondary)] mb-6">{t('community.beFirst')}</p>
-                                {isAuthenticated ? (
-                                    <button onClick={() => setShowCreateModal(true)} className="btn-primary">
-                                        {t('community.createFirst')}
-                                    </button>
-                                ) : (
-                                    <Link to="/login" className="btn-primary">
-                                        {t('community.loginToPost')}
-                                    </Link>
-                                )}
-                            </div>
-                        )}
+                                                            ))}
+                                                        </div>
+                                                    ) : comments[post.id]?.length > 0 ? (
+                                                        <div className="space-y-4">
+                                                            {comments[post.id].map((comment) => (
+                                                                <div key={comment.id} className="flex gap-3">
+                                                                    <div className="w-8 h-8 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dark)] rounded-full flex items-center justify-center text-white text-xs flex-shrink-0">
+                                                                        {comment.is_anonymous ? (
+                                                                            <EyeOff className="w-3 h-3" />
+                                                                        ) : (
+                                                                            comment.user?.name?.charAt(0) || 'A'
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <div className="flex items-center gap-2 mb-1">
+                                                                            <span className="text-sm font-medium text-[var(--text-primary)]">
+                                                                                {comment.is_anonymous ? 'Anonymous' : comment.user?.name || 'User'}
+                                                                            </span>
+                                                                            <span className="text-xs text-[var(--text-muted)]">
+                                                                                {new Date(comment.created_at).toLocaleDateString()}
+                                                                            </span>
+                                                                        </div>
+                                                                        <p className="text-sm text-[var(--text-secondary)]">{comment.content}</p>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-sm text-[var(--text-muted)] text-center py-4">
+                                                            {t('community.noComments') || 'No comments yet. Be the first to comment!'}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            );
+                        })()}
                     </div>
 
                     {/* Chat Window */}
