@@ -605,6 +605,98 @@ export default function Community() {
                     </div>
                 </div>
             )}
+
+            {/* Edit Post Modal */}
+            {editingPost && (
+                <div
+                    className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+                    onClick={() => setEditingPost(null)}
+                >
+                    <div
+                        className="bg-[var(--surface)] rounded-2xl max-w-lg w-full shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
+                            <h3 className="font-semibold text-[var(--text-primary)]">Edit Post</h3>
+                            <button
+                                onClick={() => setEditingPost(null)}
+                                className="p-2 hover:bg-[var(--surface-hover)] rounded-full"
+                            >
+                                <X className="w-5 h-5 text-[var(--text-secondary)]" />
+                            </button>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <input
+                                type="text"
+                                value={editForm.title}
+                                onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                                placeholder="Post title"
+                                className="w-full p-4 input-field rounded-xl"
+                            />
+                            <textarea
+                                value={editForm.content}
+                                onChange={(e) => setEditForm({ ...editForm, content: e.target.value })}
+                                placeholder="What's on your mind?"
+                                rows={5}
+                                className="w-full p-4 input-field rounded-xl resize-none"
+                            />
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setEditingPost(null)}
+                                    className="flex-1 py-3 px-4 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleEditPost}
+                                    disabled={!editForm.title || !editForm.content || saving}
+                                    className="flex-1 btn-primary disabled:opacity-50"
+                                >
+                                    {saving ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {deletingPost && (
+                <div
+                    className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+                    onClick={() => setDeletingPost(null)}
+                >
+                    <div
+                        className="bg-[var(--surface)] rounded-2xl max-w-sm w-full shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="p-6 text-center">
+                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Trash2 className="w-8 h-8 text-red-500" />
+                            </div>
+                            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Delete Post?</h3>
+                            <p className="text-[var(--text-secondary)] mb-6">
+                                This action cannot be undone. Are you sure you want to delete this post?
+                            </p>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setDeletingPost(null)}
+                                    className="flex-1 py-3 px-4 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleDeletePost}
+                                    disabled={saving}
+                                    className="flex-1 py-3 px-4 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
+                                >
+                                    {saving ? 'Deleting...' : 'Delete'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
