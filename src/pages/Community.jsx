@@ -162,15 +162,7 @@ export default function Community() {
             fetchPosts();
         } catch (error) {
             console.error('Failed to post comment:', error);
-            // For demo, add mock comment
-            setComments(prev => ({
-                ...prev,
-                [postId]: [
-                    ...(prev[postId] || []),
-                    { id: Date.now(), content: newComment, user: { name: user?.name || 'You' }, created_at: new Date().toISOString() }
-                ]
-            }));
-            setNewComment('');
+            alert('Failed to post comment. Please try again.');
         } finally {
             setSubmittingComment(false);
         }
