@@ -2,18 +2,20 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, Plus, User, Send, X, MoreHorizontal, Eye, EyeOff, MessageSquare, ChevronDown, ChevronUp, Reply, Trash2, Edit2 } from 'lucide-react';
+import { Heart, MessageCircle, Plus, User, Send, X, MoreHorizontal, Eye, EyeOff, MessageSquare, ChevronDown, ChevronUp, Reply, Trash2, Edit2, Users, UserCircle } from 'lucide-react';
 import api from '../api/axios';
 
 export default function Community() {
     const { t } = useTranslation();
     const { isAuthenticated, user } = useAuth();
     const [posts, setPosts] = useState([]);
+    const [myPosts, setMyPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [newPost, setNewPost] = useState({ title: '', content: '', is_anonymous: false });
     const [creating, setCreating] = useState(false);
     const [showChat, setShowChat] = useState(false);
+    const [activeTab, setActiveTab] = useState('all'); // 'all' or 'my'
     const [chatMessages, setChatMessages] = useState([
         { id: 1, user: 'Anonymous', message: 'Welcome to the community chat! 👋', own: false, time: '10:30 AM' },
         { id: 2, user: 'You', message: 'Thanks! Happy to be here.', own: true, time: '10:32 AM' },
@@ -28,9 +30,18 @@ export default function Community() {
     const [commentLoading, setCommentLoading] = useState(false);
     const [submittingComment, setSubmittingComment] = useState(false);
 
+    // Edit/Delete state
+    const [editingPost, setEditingPost] = useState(null);
+    const [deletingPost, setDeletingPost] = useState(null);
+    const [editForm, setEditForm] = useState({ title: '', content: '' });
+    const [saving, setSaving] = useState(false);
+
     useEffect(() => {
         fetchPosts();
-    }, []);
+        if (isAuthenticated) {
+            fetchMyPosts();
+        }
+    }, [isAuthenticated]);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -44,8 +55,8 @@ export default function Community() {
             console.error('Failed to fetch posts:', error);
             // Mock data for demo
             setPosts([
-                { id: 1, title: 'Finding peace in daily routines', content: 'I\'ve discovered that having a consistent morning routine really helps my mental health...', is_anonymous: false, user: { name: 'Sarah M.' }, likes_count: 12, comments_count: 5, created_at: new Date().toISOString() },
-                { id: 2, title: 'Grateful for this community', content: 'Just wanted to say thank you to everyone here. Your support means a lot during difficult times.', is_anonymous: true, likes_count: 24, comments_count: 8, created_at: new Date().toISOString() },
+                { id: 1, title: 'Finding peace in daily routines', content: 'I\'ve discovered that having a consistent morning routine really helps my mental health...', is_anonymous: false, user: { name: 'Sarah M.', id: 1 }, user_id: 1, likes_count: 12, comments_count: 5, created_at: new Date().toISOString() },
+                { id: 2, title: 'Grateful for this community', content: 'Just wanted to say thank you to everyone here. Your support means a lot during difficult times.', is_anonymous: true, user_id: 2, likes_count: 24, comments_count: 8, created_at: new Date().toISOString() },
             ]);
         } finally {
             setLoading(false);

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useBookmarks } from '../context/BookmarkContext';
+import { useAuth } from '../context/AuthContext';
 import {
     BookOpen, Video, FileText, Dumbbell, Search,
     Brain, Heart, Shield, Zap, RefreshCw, Apple, Activity,
-    Play, ExternalLink, Clock, Eye, X, ArrowLeft, User, Calendar
+    Play, ExternalLink, Clock, Eye, X, ArrowLeft, User, Calendar, Bookmark
 } from 'lucide-react';
 import api from '../api/axios';
 
@@ -62,6 +64,8 @@ export default function Learn() {
     const { t } = useTranslation();
     const { category, tab } = useParams();
     const navigate = useNavigate();
+    const { isBookmarked, toggleBookmark } = useBookmarks();
+    const { isAuthenticated } = useAuth();
     const [searchQuery, setSearchQuery] = useState('');
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -299,7 +303,23 @@ export default function Learn() {
                                                 )}
                                             </div>
                                         </div>
-                                        <ExternalLink className="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors flex-shrink-0" />
+                                        <div className="flex items-center gap-2 flex-shrink-0">
+                                            {isAuthenticated && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleBookmark('article', article.id);
+                                                    }}
+                                                    className={`p-2 rounded-lg transition-colors ${isBookmarked('article', article.id)
+                                                        ? 'bg-[var(--primary)]/10 text-[var(--primary)]'
+                                                        : 'text-[var(--text-muted)] hover:bg-[var(--surface-hover)]'
+                                                        }`}
+                                                >
+                                                    <Bookmark className={`w-5 h-5 ${isBookmarked('article', article.id) ? 'fill-current' : ''}`} />
+                                                </button>
+                                            )}
+                                            <ExternalLink className="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors" />
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -402,7 +422,7 @@ export default function Learn() {
                             }
 
                             return (
-                                <div key={exercise.id} className="card card-hover overflow-hidden cursor-pointer group">
+                                <div key={exercise.id} className="card card-hover overflow-hidden cursor-pointer group relative">
                                     <div className="aspect-square relative">
                                         <img
                                             src={imageUrl}
@@ -414,6 +434,23 @@ export default function Learn() {
                                             }}
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+                                        {/* Bookmark button */}
+                                        {isAuthenticated && (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleBookmark('exercise', exercise.id);
+                                                }}
+                                                className={`absolute top-2 end-2 p-2 rounded-lg transition-all opacity-0 group-hover:opacity-100 ${isBookmarked('exercise', exercise.id)
+                                                        ? 'bg-[var(--primary)] text-white opacity-100'
+                                                        : 'bg-black/30 text-white hover:bg-[var(--primary)]'
+                                                    }`}
+                                            >
+                                                <Bookmark className={`w-4 h-4 ${isBookmarked('exercise', exercise.id) ? 'fill-current' : ''}`} />
+                                            </button>
+                                        )}
+
                                         <div className="absolute bottom-0 start-0 end-0 p-4">
                                             <h4 className="font-semibold text-white text-sm">{exercise.title}</h4>
                                         </div>
