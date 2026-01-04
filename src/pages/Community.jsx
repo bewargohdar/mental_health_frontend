@@ -112,10 +112,7 @@ export default function Community() {
             if (isAuthenticated) fetchMyPosts();
         } catch (error) {
             console.error('Failed to delete post:', error);
-            // For demo, remove locally
-            setPosts(prev => prev.filter(p => p.id !== deletingPost.id));
-            setMyPosts(prev => prev.filter(p => p.id !== deletingPost.id));
-            setDeletingPost(null);
+            alert('Failed to delete post. Please try again.');
         } finally {
             setSaving(false);
         }
@@ -134,14 +131,7 @@ export default function Community() {
             setComments(prev => ({ ...prev, [postId]: postComments }));
         } catch (error) {
             console.error('Failed to fetch comments:', error);
-            // Mock comments for demo
-            setComments(prev => ({
-                ...prev,
-                [postId]: [
-                    { id: 1, content: 'This is so helpful, thank you for sharing!', user: { name: 'John D.' }, created_at: new Date().toISOString() },
-                    { id: 2, content: 'I completely agree with this.', user: { name: 'Anonymous' }, is_anonymous: true, created_at: new Date().toISOString() },
-                ]
-            }));
+            setComments(prev => ({ ...prev, [postId]: [] }));
         } finally {
             setCommentLoading(false);
         }

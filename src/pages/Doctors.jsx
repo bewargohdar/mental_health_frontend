@@ -5,12 +5,7 @@ import { Link } from 'react-router-dom';
 import { Search, MapPin, Star, Calendar, Clock, Award, Phone, Video, X, ChevronLeft, ChevronRight, Check, User, FileText } from 'lucide-react';
 import api from '../api/axios';
 
-const mockDoctors = [
-    { id: 1, name: 'Dr. Sarah Johnson', specialty: 'Clinical Psychologist', experience: 12, rating: 4.9, reviews: 128, image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop&crop=face', available: true, bio: 'Specializing in cognitive behavioral therapy and anxiety disorders with over 12 years of experience.' },
-    { id: 2, name: 'Dr. Michael Chen', specialty: 'Psychiatrist', experience: 15, rating: 4.8, reviews: 96, image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&crop=face', available: true, bio: 'Expert in medication management and treatment of depression and bipolar disorders.' },
-    { id: 3, name: 'Dr. Emily Brown', specialty: 'Therapist', experience: 8, rating: 4.9, reviews: 74, image: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&h=200&fit=crop&crop=face', available: false, bio: 'Focused on trauma-informed care and PTSD treatment.' },
-    { id: 4, name: 'Dr. James Wilson', specialty: 'Counselor', experience: 10, rating: 4.7, reviews: 85, image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=200&h=200&fit=crop&crop=face', available: true, bio: 'Marriage and family counselor with expertise in relationship dynamics.' },
-];
+
 
 export default function Doctors() {
     const { t } = useTranslation();
@@ -41,10 +36,10 @@ export default function Doctors() {
         try {
             const res = await api.get('/doctors');
             const data = res.data.data?.data || res.data.data || [];
-            setDoctors(Array.isArray(data) && data.length > 0 ? data : mockDoctors);
+            setDoctors(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Failed to fetch doctors:', error);
-            setDoctors(mockDoctors);
+            setDoctors([]);
         } finally {
             setLoading(false);
         }
@@ -60,15 +55,7 @@ export default function Doctors() {
             setAvailableSlots(slots);
         } catch (error) {
             console.error('Failed to fetch slots:', error);
-            // Mock slots for demo
-            setAvailableSlots([
-                { time: '09:00', available: true },
-                { time: '10:00', available: true },
-                { time: '11:00', available: false },
-                { time: '14:00', available: true },
-                { time: '15:00', available: true },
-                { time: '16:00', available: true },
-            ]);
+            setAvailableSlots([]);
         } finally {
             setLoadingSlots(false);
         }
@@ -88,9 +75,7 @@ export default function Doctors() {
             setBookingStep(5);
         } catch (error) {
             console.error('Failed to book appointment:', error);
-            // For demo, show success anyway
-            setBookingSuccess(true);
-            setBookingStep(5);
+            alert('Failed to book appointment. Please try again.');
         } finally {
             setSubmitting(false);
         }
@@ -330,8 +315,8 @@ export default function Doctors() {
                                                 key={idx}
                                                 onClick={() => handleDateSelect(date)}
                                                 className={`p-3 rounded-xl text-center transition-all ${selectedDate?.toDateString() === date.toDateString()
-                                                        ? 'bg-[var(--primary)] text-white'
-                                                        : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
+                                                    ? 'bg-[var(--primary)] text-white'
+                                                    : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
                                                     }`}
                                             >
                                                 <div className="text-xs opacity-70">
@@ -371,10 +356,10 @@ export default function Doctors() {
                                                     onClick={() => slot.available && setSelectedSlot(slot.time)}
                                                     disabled={!slot.available}
                                                     className={`p-3 rounded-xl text-center transition-all ${selectedSlot === slot.time
-                                                            ? 'bg-[var(--primary)] text-white'
-                                                            : slot.available
-                                                                ? 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
-                                                                : 'bg-[var(--light-gray)] text-[var(--text-muted)] opacity-50 cursor-not-allowed'
+                                                        ? 'bg-[var(--primary)] text-white'
+                                                        : slot.available
+                                                            ? 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
+                                                            : 'bg-[var(--light-gray)] text-[var(--text-muted)] opacity-50 cursor-not-allowed'
                                                         }`}
                                                 >
                                                     <Clock className="w-4 h-4 mx-auto mb-1" />

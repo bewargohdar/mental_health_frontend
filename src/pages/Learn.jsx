@@ -32,34 +32,6 @@ const categoryColors = {
     adhd: 'from-indigo-500 to-violet-500',
 };
 
-// Static content for Information tab
-const categoryInfo = {
-    depression: `## Understanding Depression
-
-Depression is more than just feeling sad. It's a serious mental health condition that affects how you feel, think, and handle daily activities.
-
-### Common Symptoms
-- Persistent sad, anxious, or "empty" mood
-- Feelings of hopelessness or pessimism
-- Loss of interest in hobbies and activities
-- Decreased energy or fatigue
-- Difficulty concentrating or making decisions
-
-### When to Seek Help
-If you've been experiencing symptoms for more than two weeks, it's important to reach out to a mental health professional.`,
-    anxiety: `## Understanding Anxiety
-
-Anxiety disorders are the most common mental health disorders, characterized by excessive fear or anxiety.
-
-### Common Symptoms
-- Feeling nervous, restless or tense
-- Having a sense of impending danger, panic or doom
-- Having an increased heart rate
-- Breathing rapidly (hyperventilation)
-- Sweating, trembling`,
-    // Add default info for other categories if needed or handle generic
-};
-
 export default function Learn() {
     const { t } = useTranslation();
     const { category, tab } = useParams();
@@ -95,12 +67,12 @@ export default function Learn() {
 
     useEffect(() => {
         const fetchContent = async () => {
-            if (activeTab === 'information') return;
-
             setLoading(true);
             setError(null);
             try {
                 let endpoint = '';
+                let params = { category: selectedCategory };
+
                 switch (activeTab) {
                     case 'videos':
                         endpoint = `/content/videos`;
@@ -111,13 +83,16 @@ export default function Learn() {
                     case 'exercises':
                         endpoint = `/content/exercises`;
                         break;
+                    case 'information':
+                        // Fetching specific category info or an overview article
+                        endpoint = `/content/articles`;
+                        params = { category: selectedCategory, type: 'overview' };
+                        break;
                     default:
                         return;
                 }
 
-                const res = await api.get(endpoint, {
-                    params: { category: selectedCategory }
-                });
+                const res = await api.get(endpoint, { params });
                 console.log(`Fetch ${activeTab} response:`, res.data);
 
                 // Handle different response structures
@@ -136,7 +111,12 @@ export default function Learn() {
                 setData(content);
             } catch (error) {
                 console.error(`Failed to fetch ${activeTab}:`, error);
-                setError(error.message || 'Failed to load content');
+
+                // If fetching info fails (likely because endpoint/data doesn't exist yet),
+                // we'll handle it gracefully in the render
+                if (activeTab !== 'information') {
+                    setError(error.message || 'Failed to load content');
+                }
                 setData([]);
             } finally {
                 setLoading(false);
@@ -148,22 +128,43 @@ export default function Learn() {
 
     const renderContent = () => {
         if (activeTab === 'information') {
-            const infoText = categoryInfo[selectedCategory] || categoryInfo['depression']; // Fallback
+            // Find an "overview" kind of article or just take the first one if we fetched a list
+            const infoContent = data.length > 0 ? (data[0].content || data[0].summary) : null;
+
+            if (loading) {
+                return (
+                    <div className="card p-6 sm:p-8 animate-pulse">
+                        <div className="h-8 bg-[var(--light-gray)] rounded w-1/3 mb-6" />
+                        <div className="space-y-4">
+                            <div className="h-4 bg-[var(--light-gray)] rounded w-full" />
+                            <div className="h-4 bg-[var(--light-gray)] rounded w-5/6" />
+                            <div className="h-4 bg-[var(--light-gray)] rounded w-4/6" />
+                        </div>
+                    </div>
+                );
+            }
+
+            if (!infoContent) {
+                return (
+                    <div className="card p-8 text-center">
+                        <div className="text-4xl mb-4">📚</div>
+                        <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                            Information Unavailable
+                        </h3>
+                        <p className="text-[var(--text-secondary)]">
+                            Detailed information for {categories.find(c => c.key === selectedCategory)?.label} is coming soon.
+                        </p>
+                    </div>
+                );
+            }
+
             return (
                 <div className="prose prose-lg max-w-none dark:prose-invert">
                     <div className="card p-6 sm:p-8">
-                        {infoText.split('\n').map((line, idx) => {
-                            if (line.startsWith('## ')) {
-                                return <h2 key={idx} className="text-2xl font-bold text-[var(--text-primary)] mt-0 mb-4">{line.replace('## ', '')}</h2>;
-                            } else if (line.startsWith('### ')) {
-                                return <h3 key={idx} className="text-lg font-semibold text-[var(--text-primary)] mt-6 mb-3">{line.replace('### ', '')}</h3>;
-                            } else if (line.startsWith('- ')) {
-                                return <li key={idx} className="text-[var(--text-secondary)] ml-4">{line.replace('- ', '')}</li>;
-                            } else if (line.trim()) {
-                                return <p key={idx} className="text-[var(--text-secondary)] mb-4">{line}</p>;
-                            }
-                            return null;
-                        })}
+                        {/* Simple markdown rendering for now */}
+                        <div className="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap">
+                            {infoContent}
+                        </div>
                     </div>
                 </div>
             );
@@ -443,8 +444,8 @@ export default function Learn() {
                                                     toggleBookmark('exercise', exercise.id);
                                                 }}
                                                 className={`absolute top-2 end-2 p-2 rounded-lg transition-all opacity-0 group-hover:opacity-100 ${isBookmarked('exercise', exercise.id)
-                                                        ? 'bg-[var(--primary)] text-white opacity-100'
-                                                        : 'bg-black/30 text-white hover:bg-[var(--primary)]'
+                                                    ? 'bg-[var(--primary)] text-white opacity-100'
+                                                    : 'bg-black/30 text-white hover:bg-[var(--primary)]'
                                                     }`}
                                             >
                                                 <Bookmark className={`w-4 h-4 ${isBookmarked('exercise', exercise.id) ? 'fill-current' : ''}`} />

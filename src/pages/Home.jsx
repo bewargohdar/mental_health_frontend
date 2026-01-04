@@ -24,17 +24,8 @@ export default function Home() {
     const [tips, setTips] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentTipIndex, setCurrentTipIndex] = useState(0);
-
-    // Mock weekly progress data
-    const weeklyProgress = [
-        { day: 'Mon', value: 80, logged: true },
-        { day: 'Tue', value: 65, logged: true },
-        { day: 'Wed', value: 90, logged: true },
-        { day: 'Thu', value: 75, logged: true },
-        { day: 'Fri', value: 85, logged: true },
-        { day: 'Sat', value: 0, logged: false },
-        { day: 'Sun', value: 0, logged: false },
-    ];
+    const [weeklyProgress, setWeeklyProgress] = useState([]);
+    const [daysLogged, setDaysLogged] = useState(0);
 
     useEffect(() => {
         const fetchTips = async () => {
@@ -53,7 +44,30 @@ export default function Home() {
                 setLoading(false);
             }
         };
+
+        const fetchWeeklyProgress = async () => {
+            try {
+                const res = await api.get('/progress/weekly');
+                const data = res.data.data || [];
+
+                // Process data for the chart
+                const chartData = data.map(item => ({
+                    day: item.day,
+                    value: item.avg_mood ? (item.avg_mood / 5) * 100 : 0, // Convert 1-5 scale to 0-100%
+                    logged: item.count > 0
+                }));
+
+                // Ensure we have 7 days, fill missing if needed (API usually returns 7 days)
+                setWeeklyProgress(chartData);
+                setDaysLogged(chartData.filter(d => d.logged).length);
+            } catch (error) {
+                console.error('Failed to fetch weekly progress:', error);
+                setWeeklyProgress([]);
+            }
+        };
+
         fetchTips();
+        fetchWeeklyProgress();
     }, []);
 
     // Rotate tips every 10 seconds
@@ -190,33 +204,39 @@ export default function Home() {
                                 <TrendingUp className="w-5 h-5 text-[var(--primary)]" />
                                 {t('home.weeklyProgress')}
                             </h3>
-                            <span className="text-sm text-[var(--text-secondary)]">5/7 days logged</span>
+                            <span className="text-sm text-[var(--text-secondary)]">{daysLogged}/7 days logged</span>
                         </div>
 
                         <div className="flex items-end justify-between gap-2 sm:gap-4">
-                            {weeklyProgress.map((day, idx) => (
-                                <div key={idx} className="flex-1 flex flex-col items-center gap-2">
-                                    <div className="w-full h-24 bg-[var(--light-gray)] rounded-lg relative overflow-hidden">
-                                        <div
-                                            className="absolute bottom-0 w-full rounded-lg transition-all duration-500"
-                                            style={{
-                                                height: `${day.value}%`,
-                                                background: day.logged
-                                                    ? 'linear-gradient(to top, var(--primary), var(--primary-light))'
-                                                    : 'var(--border)'
-                                            }}
-                                        ></div>
-                                        {day.logged && (
-                                            <div className="absolute top-2 left-1/2 -translate-x-1/2">
-                                                <CheckCircle className="w-4 h-4 text-[var(--primary)]" />
-                                            </div>
-                                        )}
+                            {weeklyProgress.length > 0 ? (
+                                weeklyProgress.map((day, idx) => (
+                                    <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                                        <div className="w-full h-24 bg-[var(--light-gray)] rounded-lg relative overflow-hidden">
+                                            <div
+                                                className="absolute bottom-0 w-full rounded-lg transition-all duration-500"
+                                                style={{
+                                                    height: `${day.value}%`,
+                                                    background: day.logged
+                                                        ? 'linear-gradient(to top, var(--primary), var(--primary-light))'
+                                                        : 'var(--border)'
+                                                }}
+                                            ></div>
+                                            {day.logged && (
+                                                <div className="absolute top-2 left-1/2 -translate-x-1/2">
+                                                    <CheckCircle className="w-4 h-4 text-[var(--primary)]" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <span className={`text-xs font-medium ${day.logged ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
+                                            {day.day}
+                                        </span>
                                     </div>
-                                    <span className={`text-xs font-medium ${day.logged ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
-                                        {day.day}
-                                    </span>
+                                ))
+                            ) : (
+                                <div className="w-full text-center py-8 text-[var(--text-muted)]">
+                                    Start tracking your mood to see your progress here!
                                 </div>
-                            ))}
+                            )}
                         </div>
                     </div>
                 </div>
