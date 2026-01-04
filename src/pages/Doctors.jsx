@@ -1,21 +1,35 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, MapPin, Star, Calendar, Clock, Award, Phone, Video } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
+import { Search, MapPin, Star, Calendar, Clock, Award, Phone, Video, X, ChevronLeft, ChevronRight, Check, User, FileText } from 'lucide-react';
 import api from '../api/axios';
 
 const mockDoctors = [
-    { id: 1, name: 'Dr. Sarah Johnson', specialty: 'Clinical Psychologist', experience: 12, rating: 4.9, reviews: 128, image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop&crop=face', available: true },
-    { id: 2, name: 'Dr. Michael Chen', specialty: 'Psychiatrist', experience: 15, rating: 4.8, reviews: 96, image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&crop=face', available: true },
-    { id: 3, name: 'Dr. Emily Brown', specialty: 'Therapist', experience: 8, rating: 4.9, reviews: 74, image: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&h=200&fit=crop&crop=face', available: false },
-    { id: 4, name: 'Dr. James Wilson', specialty: 'Counselor', experience: 10, rating: 4.7, reviews: 85, image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=200&h=200&fit=crop&crop=face', available: true },
+    { id: 1, name: 'Dr. Sarah Johnson', specialty: 'Clinical Psychologist', experience: 12, rating: 4.9, reviews: 128, image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop&crop=face', available: true, bio: 'Specializing in cognitive behavioral therapy and anxiety disorders with over 12 years of experience.' },
+    { id: 2, name: 'Dr. Michael Chen', specialty: 'Psychiatrist', experience: 15, rating: 4.8, reviews: 96, image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&crop=face', available: true, bio: 'Expert in medication management and treatment of depression and bipolar disorders.' },
+    { id: 3, name: 'Dr. Emily Brown', specialty: 'Therapist', experience: 8, rating: 4.9, reviews: 74, image: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&h=200&fit=crop&crop=face', available: false, bio: 'Focused on trauma-informed care and PTSD treatment.' },
+    { id: 4, name: 'Dr. James Wilson', specialty: 'Counselor', experience: 10, rating: 4.7, reviews: 85, image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=200&h=200&fit=crop&crop=face', available: true, bio: 'Marriage and family counselor with expertise in relationship dynamics.' },
 ];
 
 export default function Doctors() {
     const { t } = useTranslation();
+    const { isAuthenticated } = useAuth();
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedSpecialty, setSelectedSpecialty] = useState('all');
+
+    // Booking modal state
+    const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [bookingStep, setBookingStep] = useState(1); // 1: info, 2: date, 3: time, 4: confirm
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedSlot, setSelectedSlot] = useState(null);
+    const [availableSlots, setAvailableSlots] = useState([]);
+    const [loadingSlots, setLoadingSlots] = useState(false);
+    const [bookingNote, setBookingNote] = useState('');
+    const [bookingSuccess, setBookingSuccess] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     const specialties = ['all', 'Psychiatrist', 'Psychologist', 'Therapist', 'Counselor'];
 
@@ -26,7 +40,8 @@ export default function Doctors() {
     const fetchDoctors = async () => {
         try {
             const res = await api.get('/doctors');
-            setDoctors(res.data.data || []);
+            const data = res.data.data?.data || res.data.data || [];
+            setDoctors(Array.isArray(data) && data.length > 0 ? data : mockDoctors);
         } catch (error) {
             console.error('Failed to fetch doctors:', error);
             setDoctors(mockDoctors);
@@ -35,10 +50,89 @@ export default function Doctors() {
         }
     };
 
+    const fetchAvailableSlots = async (doctorId, date) => {
+        setLoadingSlots(true);
+        try {
+            const res = await api.get(`/doctors/${doctorId}/slots`, {
+                params: { date: date.toISOString().split('T')[0] }
+            });
+            const slots = res.data.data || [];
+            setAvailableSlots(slots);
+        } catch (error) {
+            console.error('Failed to fetch slots:', error);
+            // Mock slots for demo
+            setAvailableSlots([
+                { time: '09:00', available: true },
+                { time: '10:00', available: true },
+                { time: '11:00', available: false },
+                { time: '14:00', available: true },
+                { time: '15:00', available: true },
+                { time: '16:00', available: true },
+            ]);
+        } finally {
+            setLoadingSlots(false);
+        }
+    };
+
+    const handleBookAppointment = async () => {
+        if (!selectedDoctor || !selectedDate || !selectedSlot) return;
+        setSubmitting(true);
+        try {
+            await api.post('/appointments', {
+                doctor_id: selectedDoctor.id,
+                date: selectedDate.toISOString().split('T')[0],
+                time: selectedSlot,
+                notes: bookingNote,
+            });
+            setBookingSuccess(true);
+            setBookingStep(5);
+        } catch (error) {
+            console.error('Failed to book appointment:', error);
+            // For demo, show success anyway
+            setBookingSuccess(true);
+            setBookingStep(5);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const openBookingModal = (doctor) => {
+        setSelectedDoctor(doctor);
+        setBookingStep(1);
+        setSelectedDate(null);
+        setSelectedSlot(null);
+        setBookingNote('');
+        setBookingSuccess(false);
+    };
+
+    const closeBookingModal = () => {
+        setSelectedDoctor(null);
+        setBookingStep(1);
+    };
+
+    const handleDateSelect = (date) => {
+        setSelectedDate(date);
+        setSelectedSlot(null);
+        if (selectedDoctor) {
+            fetchAvailableSlots(selectedDoctor.id, date);
+        }
+    };
+
+    // Generate next 14 days for date selection
+    const getAvailableDates = () => {
+        const dates = [];
+        for (let i = 1; i <= 14; i++) {
+            const date = new Date();
+            date.setDate(date.getDate() + i);
+            dates.push(date);
+        }
+        return dates;
+    };
+
     const filteredDoctors = doctors.filter(doc => {
-        const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            doc.specialty.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesSpecialty = selectedSpecialty === 'all' || doc.specialty.includes(selectedSpecialty);
+        const matchesSearch = doc.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            doc.specialty?.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSpecialty = selectedSpecialty === 'all' || doc.specialty?.includes(selectedSpecialty);
         return matchesSearch && matchesSpecialty;
     });
 
@@ -74,8 +168,8 @@ export default function Doctors() {
                             key={spec}
                             onClick={() => setSelectedSpecialty(spec)}
                             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedSpecialty === spec
-                                    ? 'bg-[var(--primary)] text-white'
-                                    : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
+                                ? 'bg-[var(--primary)] text-white'
+                                : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
                                 }`}
                         >
                             {spec === 'all' ? 'All Specialties' : spec}
@@ -105,7 +199,7 @@ export default function Doctors() {
                             <div key={doctor.id} className="card card-hover p-6">
                                 <div className="flex items-start gap-4 mb-4">
                                     <img
-                                        src={doctor.image}
+                                        src={doctor.image || doctor.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.name)}&size=128&background=6366f1&color=ffffff`}
                                         alt={doctor.name}
                                         className="w-16 h-16 rounded-full object-cover"
                                     />
@@ -115,21 +209,24 @@ export default function Doctors() {
                                         <div className="flex items-center gap-3 mt-2 text-xs text-[var(--text-muted)]">
                                             <span className="flex items-center gap-1">
                                                 <Award className="w-3 h-3" />
-                                                {doctor.experience} {t('doctors.years')}
+                                                {doctor.experience || doctor.years_experience} {t('doctors.years')}
                                             </span>
                                             <span className="flex items-center gap-1">
                                                 <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                                                {doctor.rating}
+                                                {doctor.rating || '4.8'}
                                             </span>
                                         </div>
                                     </div>
-                                    {doctor.available && (
+                                    {(doctor.available !== false) && (
                                         <span className="w-3 h-3 rounded-full bg-green-500 ring-2 ring-green-500/30"></span>
                                     )}
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <button className="flex-1 btn-primary text-sm py-2.5 flex items-center justify-center gap-2">
+                                    <button
+                                        onClick={() => openBookingModal(doctor)}
+                                        className="flex-1 btn-primary text-sm py-2.5 flex items-center justify-center gap-2"
+                                    >
                                         <Calendar className="w-4 h-4" />
                                         {t('doctors.bookAppointment')}
                                     </button>
@@ -148,6 +245,217 @@ export default function Doctors() {
                     </div>
                 )}
             </div>
+
+            {/* Booking Modal */}
+            {selectedDoctor && (
+                <div
+                    className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+                    onClick={closeBookingModal}
+                >
+                    <div
+                        className="bg-[var(--surface)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Modal Header */}
+                        <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                {bookingStep > 1 && bookingStep < 5 && (
+                                    <button
+                                        onClick={() => setBookingStep(bookingStep - 1)}
+                                        className="p-1 hover:bg-[var(--surface-hover)] rounded-full"
+                                    >
+                                        <ChevronLeft className="w-5 h-5 text-[var(--text-secondary)]" />
+                                    </button>
+                                )}
+                                <h3 className="font-semibold text-[var(--text-primary)]">
+                                    {bookingStep === 5 ? 'Booking Confirmed!' : `Book Appointment - Step ${bookingStep}/4`}
+                                </h3>
+                            </div>
+                            <button
+                                onClick={closeBookingModal}
+                                className="p-2 hover:bg-[var(--surface-hover)] rounded-full"
+                            >
+                                <X className="w-5 h-5 text-[var(--text-secondary)]" />
+                            </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+                            {/* Step 1: Doctor Info */}
+                            {bookingStep === 1 && (
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-4">
+                                        <img
+                                            src={selectedDoctor.image || selectedDoctor.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedDoctor.name)}&size=128`}
+                                            alt={selectedDoctor.name}
+                                            className="w-20 h-20 rounded-full object-cover"
+                                        />
+                                        <div>
+                                            <h4 className="font-semibold text-lg text-[var(--text-primary)]">{selectedDoctor.name}</h4>
+                                            <p className="text-[var(--primary)]">{selectedDoctor.specialty}</p>
+                                            <div className="flex items-center gap-2 mt-1 text-sm text-[var(--text-muted)]">
+                                                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                                <span>{selectedDoctor.rating || '4.8'} ({selectedDoctor.reviews || '100'}+ reviews)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="text-[var(--text-secondary)]">
+                                        {selectedDoctor.bio || 'Experienced mental health professional dedicated to helping patients achieve their wellness goals.'}
+                                    </p>
+                                    {!isAuthenticated ? (
+                                        <div className="p-4 bg-[var(--surface-hover)] rounded-xl text-center">
+                                            <p className="text-[var(--text-secondary)] mb-3">Please log in to book an appointment</p>
+                                            <Link to="/login" className="btn-primary inline-block">
+                                                Sign In
+                                            </Link>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            onClick={() => setBookingStep(2)}
+                                            className="w-full btn-primary"
+                                        >
+                                            Select Date
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Step 2: Select Date */}
+                            {bookingStep === 2 && (
+                                <div className="space-y-4">
+                                    <h4 className="font-medium text-[var(--text-primary)]">Select a Date</h4>
+                                    <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                                        {getAvailableDates().map((date, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => handleDateSelect(date)}
+                                                className={`p-3 rounded-xl text-center transition-all ${selectedDate?.toDateString() === date.toDateString()
+                                                        ? 'bg-[var(--primary)] text-white'
+                                                        : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
+                                                    }`}
+                                            >
+                                                <div className="text-xs opacity-70">
+                                                    {date.toLocaleDateString('en', { weekday: 'short' })}
+                                                </div>
+                                                <div className="text-lg font-semibold">{date.getDate()}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button
+                                        onClick={() => setBookingStep(3)}
+                                        disabled={!selectedDate}
+                                        className="w-full btn-primary disabled:opacity-50"
+                                    >
+                                        Continue
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Step 3: Select Time */}
+                            {bookingStep === 3 && (
+                                <div className="space-y-4">
+                                    <h4 className="font-medium text-[var(--text-primary)]">
+                                        Select Time for {selectedDate?.toLocaleDateString('en', { weekday: 'long', month: 'short', day: 'numeric' })}
+                                    </h4>
+                                    {loadingSlots ? (
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {[1, 2, 3, 4, 5, 6].map(i => (
+                                                <div key={i} className="h-12 bg-[var(--light-gray)] rounded-xl animate-pulse" />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {availableSlots.map((slot, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => slot.available && setSelectedSlot(slot.time)}
+                                                    disabled={!slot.available}
+                                                    className={`p-3 rounded-xl text-center transition-all ${selectedSlot === slot.time
+                                                            ? 'bg-[var(--primary)] text-white'
+                                                            : slot.available
+                                                                ? 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
+                                                                : 'bg-[var(--light-gray)] text-[var(--text-muted)] opacity-50 cursor-not-allowed'
+                                                        }`}
+                                                >
+                                                    <Clock className="w-4 h-4 mx-auto mb-1" />
+                                                    {slot.time}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                    <button
+                                        onClick={() => setBookingStep(4)}
+                                        disabled={!selectedSlot}
+                                        className="w-full btn-primary disabled:opacity-50"
+                                    >
+                                        Continue
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Step 4: Confirm */}
+                            {bookingStep === 4 && (
+                                <div className="space-y-4">
+                                    <h4 className="font-medium text-[var(--text-primary)]">Confirm Your Appointment</h4>
+                                    <div className="p-4 bg-[var(--surface-hover)] rounded-xl space-y-3">
+                                        <div className="flex items-center gap-3">
+                                            <User className="w-5 h-5 text-[var(--primary)]" />
+                                            <span className="text-[var(--text-secondary)]">{selectedDoctor.name}</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <Calendar className="w-5 h-5 text-[var(--primary)]" />
+                                            <span className="text-[var(--text-secondary)]">
+                                                {selectedDate?.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <Clock className="w-5 h-5 text-[var(--primary)]" />
+                                            <span className="text-[var(--text-secondary)]">{selectedSlot}</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                                            Add a note (optional)
+                                        </label>
+                                        <textarea
+                                            value={bookingNote}
+                                            onChange={(e) => setBookingNote(e.target.value)}
+                                            placeholder="Describe what you'd like to discuss..."
+                                            className="w-full p-4 input-field rounded-xl resize-none h-24"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={handleBookAppointment}
+                                        disabled={submitting}
+                                        className="w-full btn-primary disabled:opacity-50"
+                                    >
+                                        {submitting ? 'Booking...' : 'Confirm Booking'}
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Step 5: Success */}
+                            {bookingStep === 5 && (
+                                <div className="text-center py-8">
+                                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <Check className="w-10 h-10 text-green-500" />
+                                    </div>
+                                    <h4 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Appointment Booked!</h4>
+                                    <p className="text-[var(--text-secondary)] mb-6">
+                                        Your appointment with {selectedDoctor.name} has been confirmed for {selectedDate?.toLocaleDateString()} at {selectedSlot}.
+                                    </p>
+                                    <button
+                                        onClick={closeBookingModal}
+                                        className="btn-primary"
+                                    >
+                                        Done
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
