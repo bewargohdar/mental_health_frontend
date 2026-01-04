@@ -39,7 +39,7 @@ export default function Home() {
     useEffect(() => {
         const fetchTips = async () => {
             try {
-                const res = await api.get('/tips');
+                const res = await api.get('/wellness-tips');
                 setTips(res.data.data || []);
             } catch (error) {
                 console.error('Failed to fetch tips:', error);
@@ -168,8 +168,8 @@ export default function Home() {
                                                 key={idx}
                                                 onClick={() => setCurrentTipIndex(idx)}
                                                 className={`w-2 h-2 rounded-full transition-all ${idx === currentTipIndex
-                                                        ? 'bg-[var(--primary)] w-6'
-                                                        : 'bg-white/40 hover:bg-white/60'
+                                                    ? 'bg-[var(--primary)] w-6'
+                                                    : 'bg-white/40 hover:bg-white/60'
                                                     }`}
                                             />
                                         ))}

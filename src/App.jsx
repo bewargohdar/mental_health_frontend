@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Learn from './pages/Learn';
@@ -19,7 +19,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path="learn" element={<Learn />} />
+            <Route path="learn" element={<Navigate to="/learn/depression/information" replace />} />
+            <Route path="learn/:category/:tab" element={<Learn />} />
             <Route path="track-mood" element={<TrackMood />} />
             <Route path="community" element={<Community />} />
             <Route path="doctors" element={<Doctors />} />

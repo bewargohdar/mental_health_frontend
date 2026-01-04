@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
     BookOpen, Video, FileText, Dumbbell, Search,
@@ -29,10 +30,9 @@ const categoryColors = {
     adhd: 'from-indigo-500 to-violet-500',
 };
 
-// Mock content data
-const mockContent = {
-    depression: {
-        information: `## Understanding Depression
+// Static content for Information tab
+const categoryInfo = {
+    depression: `## Understanding Depression
 
 Depression is more than just feeling sad. It's a serious mental health condition that affects how you feel, think, and handle daily activities.
 
@@ -45,32 +45,31 @@ Depression is more than just feeling sad. It's a serious mental health condition
 
 ### When to Seek Help
 If you've been experiencing symptoms for more than two weeks, it's important to reach out to a mental health professional.`,
-        videos: [
-            { id: 1, title: 'Understanding Depression', thumbnail: 'https://img.youtube.com/vi/z-IR48Mb3W0/maxresdefault.jpg', duration: '8:24', youtubeId: 'z-IR48Mb3W0' },
-            { id: 2, title: 'Coping Strategies', thumbnail: 'https://img.youtube.com/vi/1Evwgu369Jw/maxresdefault.jpg', duration: '10:15', youtubeId: '1Evwgu369Jw' },
-        ],
-        articles: [
-            { id: 1, title: 'Living with Depression: A Practical Guide', excerpt: 'Learn practical strategies for managing daily life while dealing with depression.', readTime: '5 min' },
-            { id: 2, title: 'The Science Behind Depression', excerpt: 'Understanding the biological and psychological factors that contribute to depression.', readTime: '8 min' },
-            { id: 3, title: 'Building a Support System', excerpt: 'How to create and maintain meaningful connections during difficult times.', readTime: '6 min' },
-        ],
-        exercises: [
-            { id: 1, title: 'Mindful Breathing', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&h=300&fit=crop' },
-            { id: 2, title: 'Gratitude Journaling', image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&h=300&fit=crop' },
-            { id: 3, title: 'Gentle Movement', image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop' },
-            { id: 4, title: 'Nature Walk', image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop' },
-        ],
-    },
+    anxiety: `## Understanding Anxiety
+
+Anxiety disorders are the most common mental health disorders, characterized by excessive fear or anxiety.
+
+### Common Symptoms
+- Feeling nervous, restless or tense
+- Having a sense of impending danger, panic or doom
+- Having an increased heart rate
+- Breathing rapidly (hyperventilation)
+- Sweating, trembling`,
+    // Add default info for other categories if needed or handle generic
 };
 
 export default function Learn() {
     const { t } = useTranslation();
-    const [selectedCategory, setSelectedCategory] = useState('depression');
-    const [activeTab, setActiveTab] = useState('information');
+    const { category, tab } = useParams();
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
-    const [content, setContent] = useState(null);
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [playingVideo, setPlayingVideo] = useState(null);
+
+    const selectedCategory = category || 'depression';
+    const activeTab = tab || 'information';
 
     const categories = [
         { key: 'depression', label: t('learn.categories.depression') },
@@ -90,34 +89,116 @@ export default function Learn() {
     ];
 
     useEffect(() => {
-        // Use mock data for now
-        setContent(mockContent[selectedCategory] || mockContent.depression);
-    }, [selectedCategory]);
+        const fetchContent = async () => {
+            if (activeTab === 'information') return;
+
+            setLoading(true);
+            setError(null);
+            try {
+                let endpoint = '';
+                switch (activeTab) {
+                    case 'videos':
+                        endpoint = `/content/videos`;
+                        break;
+                    case 'articles':
+                        endpoint = `/content/articles`;
+                        break;
+                    case 'exercises':
+                        endpoint = `/content/exercises`;
+                        break;
+                    default:
+                        return;
+                }
+
+                const res = await api.get(endpoint, {
+                    params: { category: selectedCategory }
+                });
+                console.log(`Fetch ${activeTab} response:`, res.data);
+
+                // Handle different response structures
+                let content = [];
+                if (res.data && Array.isArray(res.data)) {
+                    content = res.data;
+                } else if (res.data && res.data.data && Array.isArray(res.data.data)) {
+                    content = res.data.data;
+                } else if (res.data && res.data.data && res.data.data.data && Array.isArray(res.data.data.data)) {
+                    // Handle Laravel Pagination wrapped in API resource
+                    content = res.data.data.data;
+                } else {
+                    console.warn('Unexpected response format:', res.data);
+                }
+
+                setData(content);
+            } catch (error) {
+                console.error(`Failed to fetch ${activeTab}:`, error);
+                setError(error.message || 'Failed to load content');
+                setData([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchContent();
+    }, [selectedCategory, activeTab]);
 
     const renderContent = () => {
-        if (!content) return null;
+        if (activeTab === 'information') {
+            const infoText = categoryInfo[selectedCategory] || categoryInfo['depression']; // Fallback
+            return (
+                <div className="prose prose-lg max-w-none dark:prose-invert">
+                    <div className="card p-6 sm:p-8">
+                        {infoText.split('\n').map((line, idx) => {
+                            if (line.startsWith('## ')) {
+                                return <h2 key={idx} className="text-2xl font-bold text-[var(--text-primary)] mt-0 mb-4">{line.replace('## ', '')}</h2>;
+                            } else if (line.startsWith('### ')) {
+                                return <h3 key={idx} className="text-lg font-semibold text-[var(--text-primary)] mt-6 mb-3">{line.replace('### ', '')}</h3>;
+                            } else if (line.startsWith('- ')) {
+                                return <li key={idx} className="text-[var(--text-secondary)] ml-4">{line.replace('- ', '')}</li>;
+                            } else if (line.trim()) {
+                                return <p key={idx} className="text-[var(--text-secondary)] mb-4">{line}</p>;
+                            }
+                            return null;
+                        })}
+                    </div>
+                </div>
+            );
+        }
+
+        if (loading) {
+            return (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="card p-4 animate-pulse">
+                            <div className="aspect-video bg-[var(--light-gray)] rounded-lg mb-4" />
+                            <div className="h-4 bg-[var(--light-gray)] rounded w-3/4 mb-2" />
+                            <div className="h-3 bg-[var(--light-gray)] rounded w-1/2" />
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        if (error) {
+            return (
+                <div className="text-center py-12">
+                    <div className="text-4xl mb-4">⚠️</div>
+                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Connection Error</h3>
+                    <p className="text-[var(--text-secondary)] mb-4">{error}</p>
+                    <p className="text-sm text-[var(--text-muted)]">Please ensure the backend server is running.</p>
+                </div>
+            );
+        }
+
+        if (!data || data.length === 0) {
+            return (
+                <div className="text-center py-12">
+                    <div className="text-4xl mb-4">📭</div>
+                    <p className="text-[var(--text-secondary)]">No content found for this category.</p>
+                </div>
+            );
+        }
 
         switch (activeTab) {
-            case 'information':
-                return (
-                    <div className="prose prose-lg max-w-none dark:prose-invert">
-                        <div className="card p-6 sm:p-8">
-                            {content.information.split('\n').map((line, idx) => {
-                                if (line.startsWith('## ')) {
-                                    return <h2 key={idx} className="text-2xl font-bold text-[var(--text-primary)] mt-0 mb-4">{line.replace('## ', '')}</h2>;
-                                } else if (line.startsWith('### ')) {
-                                    return <h3 key={idx} className="text-lg font-semibold text-[var(--text-primary)] mt-6 mb-3">{line.replace('### ', '')}</h3>;
-                                } else if (line.startsWith('- ')) {
-                                    return <li key={idx} className="text-[var(--text-secondary)] ml-4">{line.replace('- ', '')}</li>;
-                                } else if (line.trim()) {
-                                    return <p key={idx} className="text-[var(--text-secondary)] mb-4">{line}</p>;
-                                }
-                                return null;
-                            })}
-                        </div>
-                    </div>
-                );
-
             case 'videos':
                 return (
                     <div className="space-y-6">
@@ -143,15 +224,27 @@ export default function Learn() {
                             </div>
                         ) : (
                             <div className="grid sm:grid-cols-2 gap-6">
-                                {content.videos?.map((video) => (
+                                {data.map((video) => (
                                     <div
                                         key={video.id}
                                         className="card card-hover overflow-hidden cursor-pointer group"
-                                        onClick={() => setPlayingVideo(video.youtubeId)}
+                                        onClick={() => {
+                                            let videoId = video.youtube_id || video.youtubeId;
+                                            // Extract from URL if ID is not directly available
+                                            if (!videoId && video.url) {
+                                                const match = video.url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+                                                if (match && match[2].length === 11) {
+                                                    videoId = match[2];
+                                                }
+                                            }
+
+                                            console.log('Clicking video:', videoId, video);
+                                            if (videoId) setPlayingVideo(videoId);
+                                        }}
                                     >
                                         <div className="aspect-video relative">
                                             <img
-                                                src={video.thumbnail}
+                                                src={video.thumbnail_url || video.thumbnail}
                                                 alt={video.title}
                                                 className="w-full h-full object-cover"
                                             />
@@ -177,7 +270,7 @@ export default function Learn() {
             case 'articles':
                 return (
                     <div className="grid gap-4">
-                        {content.articles?.map((article) => (
+                        {data.map((article) => (
                             <div key={article.id} className="card card-hover p-6 cursor-pointer group">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex-1">
@@ -185,12 +278,12 @@ export default function Learn() {
                                             {article.title}
                                         </h4>
                                         <p className="text-sm text-[var(--text-secondary)] mb-3">
-                                            {article.excerpt}
+                                            {article.excerpt || article.summary}
                                         </p>
                                         <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
                                             <span className="flex items-center gap-1">
                                                 <Clock className="w-3 h-3" />
-                                                {article.readTime}
+                                                {article.read_time || article.readTime}
                                             </span>
                                         </div>
                                     </div>
@@ -204,21 +297,38 @@ export default function Learn() {
             case 'exercises':
                 return (
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        {content.exercises?.map((exercise) => (
-                            <div key={exercise.id} className="card card-hover overflow-hidden cursor-pointer group">
-                                <div className="aspect-square relative">
-                                    <img
-                                        src={exercise.image}
-                                        alt={exercise.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                    <div className="absolute bottom-0 start-0 end-0 p-4">
-                                        <h4 className="font-semibold text-white text-sm">{exercise.title}</h4>
+                        {data.map((exercise) => {
+                            // Build the full image URL - handle relative paths from backend
+                            let imageUrl = exercise.image_url || exercise.image;
+                            if (imageUrl && !imageUrl.startsWith('http')) {
+                                // Prepend backend storage URL for relative paths
+                                imageUrl = `${import.meta.env.VITE_API_URL?.replace('/api/v1', '')}/storage/${imageUrl}`;
+                            }
+                            // Fallback placeholder if no image
+                            if (!imageUrl) {
+                                imageUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(exercise.title)}&size=400&background=6366f1&color=ffffff&font-size=0.33`;
+                            }
+
+                            return (
+                                <div key={exercise.id} className="card card-hover overflow-hidden cursor-pointer group">
+                                    <div className="aspect-square relative">
+                                        <img
+                                            src={imageUrl}
+                                            alt={exercise.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                            onError={(e) => {
+                                                // Fallback if image fails to load
+                                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(exercise.title)}&size=400&background=6366f1&color=ffffff&font-size=0.33`;
+                                            }}
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                        <div className="absolute bottom-0 start-0 end-0 p-4">
+                                            <h4 className="font-semibold text-white text-sm">{exercise.title}</h4>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 );
 
@@ -263,15 +373,15 @@ export default function Learn() {
                                     return (
                                         <button
                                             key={cat.key}
-                                            onClick={() => setSelectedCategory(cat.key)}
+                                            onClick={() => navigate(`/learn/${cat.key}/${activeTab}`)}
                                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-start transition-all ${selectedCategory === cat.key
-                                                    ? 'bg-[var(--primary)] text-white'
-                                                    : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
+                                                ? 'bg-[var(--primary)] text-white'
+                                                : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
                                                 }`}
                                         >
                                             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${selectedCategory === cat.key
-                                                    ? 'bg-white/20'
-                                                    : `bg-gradient-to-br ${categoryColors[cat.key]} text-white`
+                                                ? 'bg-white/20'
+                                                : `bg-gradient-to-br ${categoryColors[cat.key]} text-white`
                                                 }`}>
                                                 <Icon className="w-4 h-4" />
                                             </div>
@@ -290,10 +400,10 @@ export default function Learn() {
                             {contentTabs.map((tab) => (
                                 <button
                                     key={tab.key}
-                                    onClick={() => setActiveTab(tab.key)}
+                                    onClick={() => navigate(`/learn/${selectedCategory}/${tab.key}`)}
                                     className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all ${activeTab === tab.key
-                                            ? 'bg-[var(--primary)] text-white'
-                                            : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
+                                        ? 'bg-[var(--primary)] text-white'
+                                        : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
                                         }`}
                                 >
                                     <tab.icon className="w-4 h-4" />
