@@ -302,7 +302,7 @@ export default function Learn() {
                             let imageUrl = exercise.image_url || exercise.image;
                             if (imageUrl && !imageUrl.startsWith('http')) {
                                 // Prepend backend storage URL for relative paths
-                                imageUrl = `${import.meta.env.VITE_API_URL?.replace('/api/v1', '')}/storage/${imageUrl}`;
+                                imageUrl = `http://127.0.0.1:8000/storage/${imageUrl}`;
                             }
                             // Fallback placeholder if no image
                             if (!imageUrl) {
