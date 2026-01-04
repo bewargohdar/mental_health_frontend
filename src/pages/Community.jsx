@@ -355,9 +355,25 @@ export default function Community() {
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <button className="p-2 hover:bg-[var(--surface-hover)] rounded-full transition-colors">
-                                                    <MoreHorizontal className="w-5 h-5 text-[var(--text-muted)]" />
-                                                </button>
+                                                {/* Edit/Delete buttons for own posts */}
+                                                {isOwnPost(post) && (
+                                                    <div className="flex items-center gap-1">
+                                                        <button
+                                                            onClick={() => openEditModal(post)}
+                                                            className="p-2 hover:bg-[var(--surface-hover)] rounded-full transition-colors text-[var(--text-muted)] hover:text-[var(--primary)]"
+                                                            title="Edit post"
+                                                        >
+                                                            <Edit2 className="w-4 h-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setDeletingPost(post)}
+                                                            className="p-2 hover:bg-red-50 rounded-full transition-colors text-[var(--text-muted)] hover:text-red-500"
+                                                            title="Delete post"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
 
                                             {/* Content */}
