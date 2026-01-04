@@ -1,15 +1,38 @@
 import { Link, NavLink } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
-import { Menu, X, User, LogOut, Heart } from 'lucide-react';
+import { useNotifications } from '../context/NotificationContext';
+import { Menu, X, User, LogOut, Heart, Bell, Check, CheckCheck, MessageCircle, Calendar, TrendingUp } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import ThemeToggle from './ThemeToggle';
 
+// Notification type icons
+const notificationIcons = {
+    appointment: Calendar,
+    mood: TrendingUp,
+    comment: MessageCircle,
+    default: Bell,
+};
+
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const notificationRef = useRef(null);
     const { user, isAuthenticated, logout } = useAuth();
+    const { notifications, unreadCount, markAsRead, markAllAsRead, loading } = useNotifications();
     const { t } = useTranslation();
+
+    // Close notification dropdown when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+                setShowNotifications(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const navLinks = [
         { path: '/', label: t('nav.home') },

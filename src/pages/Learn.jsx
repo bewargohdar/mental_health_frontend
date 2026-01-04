@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
     BookOpen, Video, FileText, Dumbbell, Search,
     Brain, Heart, Shield, Zap, RefreshCw, Apple, Activity,
-    Play, ExternalLink, Clock, Eye
+    Play, ExternalLink, Clock, Eye, X, ArrowLeft, User, Calendar
 } from 'lucide-react';
 import api from '../api/axios';
 
@@ -67,6 +67,7 @@ export default function Learn() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [playingVideo, setPlayingVideo] = useState(null);
+    const [selectedArticle, setSelectedArticle] = useState(null);
 
     const selectedCategory = category || 'depression';
     const activeTab = tab || 'information';
@@ -269,29 +270,120 @@ export default function Learn() {
 
             case 'articles':
                 return (
-                    <div className="grid gap-4">
-                        {data.map((article) => (
-                            <div key={article.id} className="card card-hover p-6 cursor-pointer group">
-                                <div className="flex items-start justify-between gap-4">
-                                    <div className="flex-1">
-                                        <h4 className="font-semibold text-[var(--text-primary)] mb-2 group-hover:text-[var(--primary)] transition-colors">
-                                            {article.title}
-                                        </h4>
-                                        <p className="text-sm text-[var(--text-secondary)] mb-3">
-                                            {article.excerpt || article.summary}
-                                        </p>
-                                        <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
-                                            <span className="flex items-center gap-1">
-                                                <Clock className="w-3 h-3" />
-                                                {article.read_time || article.readTime}
-                                            </span>
+                    <>
+                        <div className="grid gap-4">
+                            {data.map((article) => (
+                                <div
+                                    key={article.id}
+                                    className="card card-hover p-6 cursor-pointer group"
+                                    onClick={() => setSelectedArticle(article)}
+                                >
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="flex-1">
+                                            <h4 className="font-semibold text-[var(--text-primary)] mb-2 group-hover:text-[var(--primary)] transition-colors">
+                                                {article.title}
+                                            </h4>
+                                            <p className="text-sm text-[var(--text-secondary)] mb-3">
+                                                {article.excerpt || article.summary}
+                                            </p>
+                                            <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
+                                                <span className="flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" />
+                                                    {article.read_time || article.readTime}
+                                                </span>
+                                                {article.author && (
+                                                    <span className="flex items-center gap-1">
+                                                        <User className="w-3 h-3" />
+                                                        {article.author.name || article.author}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <ExternalLink className="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors flex-shrink-0" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Article Detail Modal */}
+                        {selectedArticle && (
+                            <div
+                                className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+                                onClick={() => setSelectedArticle(null)}
+                            >
+                                <div
+                                    className="bg-[var(--surface)] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    {/* Modal Header */}
+                                    <div className="sticky top-0 bg-[var(--surface)] border-b border-[var(--border)] p-4 flex items-center justify-between">
+                                        <button
+                                            onClick={() => setSelectedArticle(null)}
+                                            className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                                        >
+                                            <ArrowLeft className="w-5 h-5" />
+                                            <span>Back to articles</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setSelectedArticle(null)}
+                                            className="p-2 rounded-full hover:bg-[var(--surface-hover)] transition-colors"
+                                        >
+                                            <X className="w-5 h-5 text-[var(--text-secondary)]" />
+                                        </button>
+                                    </div>
+
+                                    {/* Modal Content */}
+                                    <div className="p-6 sm:p-8 overflow-y-auto max-h-[calc(90vh-80px)]">
+                                        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-4">
+                                            {selectedArticle.title}
+                                        </h1>
+
+                                        {/* Article Meta */}
+                                        <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-muted)] mb-6 pb-6 border-b border-[var(--border)]">
+                                            {selectedArticle.author && (
+                                                <span className="flex items-center gap-2">
+                                                    <User className="w-4 h-4" />
+                                                    {selectedArticle.author.name || selectedArticle.author}
+                                                </span>
+                                            )}
+                                            {selectedArticle.read_time && (
+                                                <span className="flex items-center gap-2">
+                                                    <Clock className="w-4 h-4" />
+                                                    {selectedArticle.read_time}
+                                                </span>
+                                            )}
+                                            {selectedArticle.published_at && (
+                                                <span className="flex items-center gap-2">
+                                                    <Calendar className="w-4 h-4" />
+                                                    {new Date(selectedArticle.published_at).toLocaleDateString()}
+                                                </span>
+                                            )}
+                                            {selectedArticle.views_count !== undefined && (
+                                                <span className="flex items-center gap-2">
+                                                    <Eye className="w-4 h-4" />
+                                                    {selectedArticle.views_count} views
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {/* Article Content */}
+                                        <div className="prose prose-lg max-w-none dark:prose-invert">
+                                            {selectedArticle.content ? (
+                                                <div
+                                                    className="text-[var(--text-secondary)] leading-relaxed"
+                                                    dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+                                                />
+                                            ) : (
+                                                <p className="text-[var(--text-secondary)] leading-relaxed">
+                                                    {selectedArticle.excerpt || selectedArticle.summary || 'No content available.'}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
-                                    <ExternalLink className="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors flex-shrink-0" />
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        )}
+                    </>
                 );
 
             case 'exercises':
