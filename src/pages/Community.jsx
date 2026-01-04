@@ -1,0 +1,335 @@
+import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
+import { Heart, MessageCircle, Plus, User, Send, X, MoreHorizontal, Eye, EyeOff, MessageSquare } from 'lucide-react';
+import api from '../api/axios';
+
+export default function Community() {
+    const { t } = useTranslation();
+    const { isAuthenticated, user } = useAuth();
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [newPost, setNewPost] = useState({ title: '', content: '', is_anonymous: false });
+    const [creating, setCreating] = useState(false);
+    const [showChat, setShowChat] = useState(false);
+    const [chatMessages, setChatMessages] = useState([
+        { id: 1, user: 'Anonymous', message: 'Welcome to the community chat! 👋', own: false, time: '10:30 AM' },
+        { id: 2, user: 'You', message: 'Thanks! Happy to be here.', own: true, time: '10:32 AM' },
+    ]);
+    const [newMessage, setNewMessage] = useState('');
+    const chatEndRef = useRef(null);
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
+    useEffect(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [chatMessages]);
+
+    const fetchPosts = async () => {
+        try {
+            const res = await api.get('/posts');
+            setPosts(res.data.data?.data || res.data.data || []);
+        } catch (error) {
+            console.error('Failed to fetch posts:', error);
+            // Mock data for demo
+            setPosts([
+                { id: 1, title: 'Finding peace in daily routines', content: 'I\'ve discovered that having a consistent morning routine really helps my mental health...', is_anonymous: false, user: { name: 'Sarah M.' }, likes_count: 12, comments_count: 5, created_at: new Date().toISOString() },
+                { id: 2, title: 'Grateful for this community', content: 'Just wanted to say thank you to everyone here. Your support means a lot during difficult times.', is_anonymous: true, likes_count: 24, comments_count: 8, created_at: new Date().toISOString() },
+            ]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleLike = async (postId) => {
+        if (!isAuthenticated) return;
+        try {
+            await api.post(`/posts/${postId}/like`);
+            fetchPosts();
+        } catch (error) {
+            console.error('Failed to like post:', error);
+        }
+    };
+
+    const handleCreatePost = async () => {
+        if (!newPost.title || !newPost.content) return;
+        setCreating(true);
+        try {
+            await api.post('/posts', newPost);
+            setNewPost({ title: '', content: '', is_anonymous: false });
+            setShowCreateModal(false);
+            fetchPosts();
+        } catch (error) {
+            console.error('Failed to create post:', error);
+        } finally {
+            setCreating(false);
+        }
+    };
+
+    const handleSendMessage = () => {
+        if (!newMessage.trim()) return;
+        setChatMessages([...chatMessages, {
+            id: Date.now(),
+            user: 'You',
+            message: newMessage,
+            own: true,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }]);
+        setNewMessage('');
+    };
+
+    return (
+        <div className="min-h-screen bg-[var(--background)]">
+            {/* Header */}
+            <div className="bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dark)] text-white py-12">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center flex-wrap gap-4">
+                        <div>
+                            <h1 className="text-3xl font-bold mb-2">{t('community.title')}</h1>
+                            <p className="opacity-90">{t('community.subtitle')}</p>
+                        </div>
+                        <div className="flex gap-3">
+                            {isAuthenticated && (
+                                <button
+                                    onClick={() => setShowChat(!showChat)}
+                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold transition-colors ${showChat
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-white/10 text-white hover:bg-white/20'
+                                        }`}
+                                >
+                                    <MessageSquare className="w-5 h-5" />
+                                    {t('community.chat')}
+                                </button>
+                            )}
+                            {isAuthenticated && (
+                                <button
+                                    onClick={() => setShowCreateModal(true)}
+                                    className="flex items-center gap-2 bg-white text-[var(--accent-dark)] px-6 py-2.5 rounded-full font-semibold hover:bg-white/90 transition-colors"
+                                >
+                                    <Plus className="w-5 h-5" />
+                                    {t('community.newPost')}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="flex gap-8">
+                    {/* Posts Feed */}
+                    <div className={`flex-1 ${showChat ? 'hidden lg:block' : ''}`}>
+                        {loading ? (
+                            <div className="space-y-6">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="card p-6 animate-pulse">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-12 h-12 bg-[var(--light-gray)] rounded-full" />
+                                            <div>
+                                                <div className="h-4 bg-[var(--light-gray)] rounded w-32 mb-2" />
+                                                <div className="h-3 bg-[var(--light-gray)] rounded w-20" />
+                                            </div>
+                                        </div>
+                                        <div className="h-4 bg-[var(--light-gray)] rounded w-3/4 mb-2" />
+                                        <div className="h-4 bg-[var(--light-gray)] rounded w-1/2" />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : posts.length > 0 ? (
+                            <div className="space-y-6">
+                                {posts.map((post) => (
+                                    <div key={post.id} className="card p-6">
+                                        {/* Author */}
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white">
+                                                    {post.is_anonymous ? (
+                                                        <EyeOff className="w-5 h-5" />
+                                                    ) : (
+                                                        <span className="text-lg font-semibold">
+                                                            {post.user?.name?.charAt(0) || 'A'}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="font-semibold text-[var(--text-primary)]">
+                                                            {post.is_anonymous ? 'Anonymous' : post.user?.name || 'User'}
+                                                        </p>
+                                                        {post.is_anonymous && (
+                                                            <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--light-gray)] text-[var(--text-muted)]">
+                                                                Anonymous
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-sm text-[var(--text-muted)]">
+                                                        {new Date(post.created_at).toLocaleDateString()}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button className="p-2 hover:bg-[var(--surface-hover)] rounded-full transition-colors">
+                                                <MoreHorizontal className="w-5 h-5 text-[var(--text-muted)]" />
+                                            </button>
+                                        </div>
+
+                                        {/* Content */}
+                                        <h3 className="font-semibold text-lg text-[var(--text-primary)] mb-2">{post.title}</h3>
+                                        <p className="text-[var(--text-secondary)] mb-4">{post.content}</p>
+
+                                        {/* Actions */}
+                                        <div className="flex items-center gap-6 pt-4 border-t border-[var(--border)]">
+                                            <button
+                                                onClick={() => handleLike(post.id)}
+                                                className="flex items-center gap-2 text-[var(--text-muted)] hover:text-red-500 transition-colors"
+                                            >
+                                                <Heart className={`w-5 h-5 ${post.likes_count > 0 ? 'fill-red-500 text-red-500' : ''}`} />
+                                                <span className="text-sm">{post.likes_count || 0}</span>
+                                            </button>
+                                            <button className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">
+                                                <MessageCircle className="w-5 h-5" />
+                                                <span className="text-sm">{post.comments_count || 0}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-16 card">
+                                <div className="text-6xl mb-4">💬</div>
+                                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">{t('community.noPosts')}</h3>
+                                <p className="text-[var(--text-secondary)] mb-6">{t('community.beFirst')}</p>
+                                {isAuthenticated ? (
+                                    <button onClick={() => setShowCreateModal(true)} className="btn-primary">
+                                        {t('community.createFirst')}
+                                    </button>
+                                ) : (
+                                    <Link to="/login" className="btn-primary">
+                                        {t('community.loginToPost')}
+                                    </Link>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Chat Window */}
+                    {showChat && isAuthenticated && (
+                        <div className="w-full lg:w-80 flex-shrink-0">
+                            <div className="card h-[500px] flex flex-col sticky top-20">
+                                {/* Chat Header */}
+                                <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
+                                    <h3 className="font-semibold text-[var(--text-primary)]">{t('community.chat')}</h3>
+                                    <button
+                                        onClick={() => setShowChat(false)}
+                                        className="p-1 hover:bg-[var(--surface-hover)] rounded lg:hidden"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+
+                                {/* Messages */}
+                                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                                    {chatMessages.map((msg) => (
+                                        <div
+                                            key={msg.id}
+                                            className={`flex ${msg.own ? 'justify-end' : 'justify-start'}`}
+                                        >
+                                            <div className={`chat-bubble ${msg.own ? 'own' : ''} max-w-[85%]`}>
+                                                {!msg.own && (
+                                                    <p className="text-xs font-medium mb-1 opacity-70">{msg.user}</p>
+                                                )}
+                                                <p className="text-sm">{msg.message}</p>
+                                                <p className={`text-xs mt-1 ${msg.own ? 'text-white/70' : 'text-[var(--text-muted)]'}`}>
+                                                    {msg.time}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <div ref={chatEndRef} />
+                                </div>
+
+                                {/* Input */}
+                                <div className="p-4 border-t border-[var(--border)]">
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={newMessage}
+                                            onChange={(e) => setNewMessage(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                                            placeholder={t('community.typeMesage')}
+                                            className="flex-1 px-4 py-2 input-field rounded-full text-sm"
+                                        />
+                                        <button
+                                            onClick={handleSendMessage}
+                                            className="p-2.5 bg-[var(--primary)] text-white rounded-full hover:bg-[var(--primary-dark)] transition-colors"
+                                        >
+                                            <Send className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Create Post Modal */}
+            {showCreateModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="card p-6 sm:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-2xl font-bold text-[var(--text-primary)]">{t('community.createPost')}</h2>
+                            <button onClick={() => setShowCreateModal(false)} className="p-2 hover:bg-[var(--surface-hover)] rounded-full">
+                                <X className="w-6 h-6 text-[var(--text-muted)]" />
+                            </button>
+                        </div>
+
+                        <input
+                            type="text"
+                            placeholder={t('community.postTitle')}
+                            value={newPost.title}
+                            onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+                            className="w-full p-4 input-field rounded-xl mb-4"
+                        />
+
+                        <textarea
+                            placeholder={t('community.postContent')}
+                            value={newPost.content}
+                            onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+                            className="w-full p-4 input-field rounded-xl resize-none h-32 mb-4"
+                        />
+
+                        {/* Anonymous Toggle */}
+                        <label className="flex items-center gap-3 mb-6 cursor-pointer p-4 rounded-xl bg-[var(--surface-hover)] hover:bg-[var(--light-gray)] transition-colors">
+                            <div className={`relative w-12 h-7 rounded-full transition-colors ${newPost.is_anonymous ? 'bg-[var(--primary)]' : 'bg-[var(--border)]'}`}>
+                                <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${newPost.is_anonymous ? 'translate-x-6' : 'translate-x-1'}`} />
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {newPost.is_anonymous ? <EyeOff className="w-5 h-5 text-[var(--primary)]" /> : <Eye className="w-5 h-5 text-[var(--text-muted)]" />}
+                                <span className="text-[var(--text-primary)] font-medium">{t('community.postAnonymously')}</span>
+                            </div>
+                            <input
+                                type="checkbox"
+                                checked={newPost.is_anonymous}
+                                onChange={(e) => setNewPost({ ...newPost, is_anonymous: e.target.checked })}
+                                className="sr-only"
+                            />
+                        </label>
+
+                        <button
+                            onClick={handleCreatePost}
+                            disabled={!newPost.title || !newPost.content || creating}
+                            className="w-full btn-primary flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            <Send className="w-5 h-5" />
+                            {creating ? t('community.posting') : t('community.post')}
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

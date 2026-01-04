@@ -1,0 +1,403 @@
+@import "tailwindcss";
+
+/* Custom color variables for PeaceHub theme - Calming Palette */
+:root {
+  /* Primary - Soft Blue */
+  --primary: #6B9FD4;
+  --primary-light: #8BB8E8;
+  --primary-dark: #4A7FB8;
+
+  /* Secondary - Sage Green */
+  --secondary: #8FBC8F;
+  --secondary-light: #A8D4A8;
+  --secondary-dark: #6B9B6B;
+
+  /* Accent - Lavender */
+  --accent: #B8A9C9;
+  --accent-light: #D4C9E0;
+  --accent-dark: #9B8AB0;
+
+  /* Pink accent */
+  --pink: #E8A0B5;
+  --pink-light: rgba(232, 160, 181, 0.25);
+
+  /* Backgrounds */
+  --background: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface-hover: #F1F5F9;
+
+  /* Gray scale */
+  --light-gray: #F1F5F9;
+  --light-blue: #E0F2FE;
+
+  /* Text */
+  --text-primary: #1F2937;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+
+  /* Borders */
+  --border: #E5E7EB;
+  --border-light: #F3F4F6;
+}
+
+/* Dark mode variables */
+:root.dark {
+  --primary: #8BB8E8;
+  --primary-light: #A8D0F8;
+  --primary-dark: #6B9FD4;
+
+  --secondary: #A8D4A8;
+  --secondary-light: #C1E8C1;
+  --secondary-dark: #8FBC8F;
+
+  --accent: #D4C9E0;
+  --accent-light: #E8E0F0;
+  --accent-dark: #B8A9C9;
+
+  --pink: #F0B8C8;
+  --pink-light: rgba(240, 184, 200, 0.25);
+
+  --background: #0F172A;
+  --surface: #1E293B;
+  --surface-hover: #334155;
+
+  --light-gray: #334155;
+  --light-blue: #1E3A5F;
+
+  --text-primary: #F1F5F9;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+
+  --border: #334155;
+  --border-light: #475569;
+}
+
+/* Base styles */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--background);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .space-x-2> :not([hidden])~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+[dir="rtl"] .space-x-3> :not([hidden])~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+[dir="rtl"] .space-x-4> :not([hidden])~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+[dir="rtl"] .ml-auto {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+[dir="rtl"] .pl-4 {
+  padding-left: 0;
+  padding-right: 1rem;
+}
+
+[dir="rtl"] .pr-4 {
+  padding-right: 0;
+  padding-left: 1rem;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Blob shape animations */
+@keyframes blob {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card styles */
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(107, 159, 212, 0.15);
+}
+
+:root.dark .card-hover:hover {
+  box-shadow: 0 20px 40px rgba(139, 184, 232, 0.1);
+}
+
+/* Button styles */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(107, 159, 212, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(107, 159, 212, 0.4);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  padding: 10px 26px;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+:root.dark .glass {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Dark mode specific utilities */
+.dark-bg {
+  background-color: var(--background);
+}
+
+.dark-surface {
+  background-color: var(--surface);
+}
+
+.dark-text {
+  color: var(--text-primary);
+}
+
+.dark-text-secondary {
+  color: var(--text-secondary);
+}
+
+/* Input styles */
+.input-field {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.input-field:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(107, 159, 212, 0.2);
+}
+
+.input-field::placeholder {
+  color: var(--text-muted);
+}
+
+/* Mood emoji animations */
+@keyframes bounce-subtle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.mood-emoji {
+  transition: transform 0.2s ease;
+}
+
+.mood-emoji:hover {
+  animation: bounce-subtle 0.5s ease infinite;
+}
+
+.mood-emoji.selected {
+  transform: scale(1.2);
+  filter: drop-shadow(0 4px 8px rgba(107, 159, 212, 0.4));
+}
+
+/* Progress bar */
+.progress-bar {
+  background: var(--light-gray);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+/* Calming gradient backgrounds */
+.gradient-calm {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-light) 50%, var(--secondary-light) 100%);
+}
+
+.gradient-calm-dark {
+  background: linear-gradient(135deg, #1E3A5F 0%, #2D2854 50%, #1E4035 100%);
+}
+
+/* Tab styles */
+.tab {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.tab:hover {
+  background-color: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.tab.active {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Chat bubble */
+.chat-bubble {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.chat-bubble.own {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+}
+
+/* Category card */
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.category-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 8px 25px rgba(107, 159, 212, 0.15);
+}
+
+.category-card.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(107, 159, 212, 0.1) 0%, rgba(184, 169, 201, 0.1) 100%);
+}
+
+/* Wellness tip card */
+.wellness-tip {
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--secondary-light) 100%);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+:root.dark .wellness-tip {
+  background: linear-gradient(135deg, rgba(184, 169, 201, 0.2) 0%, rgba(143, 188, 143, 0.2) 100%);
+}
+
+.wellness-tip::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  pointer-events: none;
+}

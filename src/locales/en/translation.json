@@ -1,0 +1,143 @@
+{
+    "nav": {
+        "home": "Home",
+        "learn": "Learn",
+        "trackMood": "Track Mood",
+        "community": "Community",
+        "doctors": "Doctors",
+        "dashboard": "Dashboard",
+        "signIn": "Sign In",
+        "getStarted": "Get Started",
+        "logout": "Logout"
+    },
+    "home": {
+        "welcome": "Welcome to PeaceHub",
+        "tagline": "Your mental wellness journey starts here",
+        "heroDescription": "Take the first step towards a healthier mind. Track your mood, learn coping strategies, and connect with a supportive community.",
+        "startJourney": "Start Your Journey",
+        "learnMore": "Learn More",
+        "dailyTip": "Daily Wellness Tip",
+        "weeklyProgress": "Weekly Progress",
+        "features": {
+            "trackMood": "Track Mood",
+            "trackMoodDesc": "Monitor your emotional patterns",
+            "learn": "Learn & Grow",
+            "learnDesc": "Access mental health resources",
+            "community": "Community",
+            "communityDesc": "Connect with others",
+            "doctors": "Find Help",
+            "doctorsDesc": "Connect with professionals"
+        }
+    },
+    "learn": {
+        "title": "Learning Center",
+        "subtitle": "Explore mental health resources and information",
+        "categories": {
+            "depression": "Depression",
+            "anxiety": "Anxiety",
+            "ptsd": "PTSD",
+            "bipolar": "Bipolar Disorder",
+            "ocd": "OCD",
+            "eatingDisorders": "Eating Disorders",
+            "adhd": "ADHD"
+        },
+        "contentTypes": {
+            "information": "Information",
+            "videos": "Videos",
+            "articles": "Articles",
+            "exercises": "Exercises"
+        },
+        "search": "Search resources...",
+        "noContent": "No content available for this category yet."
+    },
+    "trackMood": {
+        "title": "Track Your Mood",
+        "subtitle": "How are you feeling today?",
+        "selectMood": "Select your mood",
+        "moodScale": "Mood Intensity (1-5)",
+        "note": "Add a note (optional)",
+        "notePlaceholder": "What's on your mind?",
+        "submit": "Save Mood",
+        "history": "Mood History",
+        "moods": {
+            "happy": "Happy",
+            "sad": "Sad",
+            "anxious": "Anxious",
+            "calm": "Calm",
+            "angry": "Angry",
+            "hopeful": "Hopeful"
+        }
+    },
+    "community": {
+        "title": "Community",
+        "subtitle": "Connect, share, and support each other",
+        "newPost": "New Post",
+        "createPost": "Create Post",
+        "postTitle": "Post title...",
+        "postContent": "What's on your mind?",
+        "postAnonymously": "Post anonymously",
+        "post": "Post",
+        "posting": "Posting...",
+        "noPosts": "No posts yet",
+        "beFirst": "Be the first to share something with the community!",
+        "createFirst": "Create First Post",
+        "loginToPost": "Login to Post",
+        "chat": "Community Chat",
+        "typeMesage": "Type a message...",
+        "send": "Send"
+    },
+    "doctors": {
+        "title": "Find a Doctor",
+        "subtitle": "Connect with mental health professionals",
+        "search": "Search doctors...",
+        "specialization": "Specialization",
+        "experience": "Experience",
+        "years": "years",
+        "bookAppointment": "Book Appointment",
+        "viewProfile": "View Profile"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "welcome": "Welcome back",
+        "moodAnalytics": "Mood Analytics",
+        "thisWeek": "This Week",
+        "thisMonth": "This Month",
+        "averageMood": "Average Mood",
+        "totalEntries": "Total Entries",
+        "streak": "Current Streak",
+        "days": "days",
+        "profileSettings": "Profile Settings",
+        "editProfile": "Edit Profile",
+        "preferences": "Preferences",
+        "notifications": "Notifications",
+        "privacy": "Privacy Settings"
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "Something went wrong",
+        "retry": "Retry",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "close": "Close",
+        "viewAll": "View All",
+        "seeMore": "See More"
+    },
+    "theme": {
+        "light": "Light Mode",
+        "dark": "Dark Mode",
+        "toggle": "Toggle Theme"
+    },
+    "auth": {
+        "login": "Login",
+        "register": "Register",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "name": "Full Name",
+        "forgotPassword": "Forgot Password?",
+        "noAccount": "Don't have an account?",
+        "hasAccount": "Already have an account?"
+    }
+}

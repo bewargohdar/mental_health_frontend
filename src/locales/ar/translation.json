@@ -1,0 +1,143 @@
+{
+    "nav": {
+        "home": "الرئيسية",
+        "learn": "تعلم",
+        "trackMood": "تتبع المزاج",
+        "community": "المجتمع",
+        "doctors": "الأطباء",
+        "dashboard": "لوحة التحكم",
+        "signIn": "تسجيل الدخول",
+        "getStarted": "ابدأ الآن",
+        "logout": "تسجيل الخروج"
+    },
+    "home": {
+        "welcome": "مرحباً بك في PeaceHub",
+        "tagline": "رحلة صحتك النفسية تبدأ هنا",
+        "heroDescription": "اتخذ الخطوة الأولى نحو عقل أكثر صحة. تتبع مزاجك، تعلم استراتيجيات التأقلم، وتواصل مع مجتمع داعم.",
+        "startJourney": "ابدأ رحلتك",
+        "learnMore": "اعرف المزيد",
+        "dailyTip": "نصيحة اليوم",
+        "weeklyProgress": "التقدم الأسبوعي",
+        "features": {
+            "trackMood": "تتبع المزاج",
+            "trackMoodDesc": "راقب أنماطك العاطفية",
+            "learn": "تعلم وتطور",
+            "learnDesc": "الوصول إلى موارد الصحة النفسية",
+            "community": "المجتمع",
+            "communityDesc": "تواصل مع الآخرين",
+            "doctors": "ابحث عن مساعدة",
+            "doctorsDesc": "تواصل مع المختصين"
+        }
+    },
+    "learn": {
+        "title": "مركز التعلم",
+        "subtitle": "استكشف موارد ومعلومات الصحة النفسية",
+        "categories": {
+            "depression": "الاكتئاب",
+            "anxiety": "القلق",
+            "ptsd": "اضطراب ما بعد الصدمة",
+            "bipolar": "اضطراب ثنائي القطب",
+            "ocd": "الوسواس القهري",
+            "eatingDisorders": "اضطرابات الأكل",
+            "adhd": "اضطراب فرط الحركة"
+        },
+        "contentTypes": {
+            "information": "معلومات",
+            "videos": "فيديوهات",
+            "articles": "مقالات",
+            "exercises": "تمارين"
+        },
+        "search": "ابحث في الموارد...",
+        "noContent": "لا يوجد محتوى متاح لهذه الفئة بعد."
+    },
+    "trackMood": {
+        "title": "تتبع مزاجك",
+        "subtitle": "كيف تشعر اليوم؟",
+        "selectMood": "اختر مزاجك",
+        "moodScale": "شدة المزاج (1-5)",
+        "note": "أضف ملاحظة (اختياري)",
+        "notePlaceholder": "ما الذي يدور في ذهنك؟",
+        "submit": "حفظ المزاج",
+        "history": "سجل المزاج",
+        "moods": {
+            "happy": "سعيد",
+            "sad": "حزين",
+            "anxious": "قلق",
+            "calm": "هادئ",
+            "angry": "غاضب",
+            "hopeful": "متفائل"
+        }
+    },
+    "community": {
+        "title": "المجتمع",
+        "subtitle": "تواصل، شارك، وادعم بعضكم البعض",
+        "newPost": "منشور جديد",
+        "createPost": "إنشاء منشور",
+        "postTitle": "عنوان المنشور...",
+        "postContent": "ما الذي يدور في ذهنك؟",
+        "postAnonymously": "نشر بشكل مجهول",
+        "post": "نشر",
+        "posting": "جاري النشر...",
+        "noPosts": "لا توجد منشورات بعد",
+        "beFirst": "كن أول من يشارك شيئاً مع المجتمع!",
+        "createFirst": "إنشاء أول منشور",
+        "loginToPost": "سجل دخولك للنشر",
+        "chat": "دردشة المجتمع",
+        "typeMesage": "اكتب رسالة...",
+        "send": "إرسال"
+    },
+    "doctors": {
+        "title": "ابحث عن طبيب",
+        "subtitle": "تواصل مع أخصائيي الصحة النفسية",
+        "search": "ابحث عن أطباء...",
+        "specialization": "التخصص",
+        "experience": "الخبرة",
+        "years": "سنوات",
+        "bookAppointment": "حجز موعد",
+        "viewProfile": "عرض الملف الشخصي"
+    },
+    "dashboard": {
+        "title": "لوحة التحكم",
+        "welcome": "مرحباً بعودتك",
+        "moodAnalytics": "تحليلات المزاج",
+        "thisWeek": "هذا الأسبوع",
+        "thisMonth": "هذا الشهر",
+        "averageMood": "متوسط المزاج",
+        "totalEntries": "إجمالي الإدخالات",
+        "streak": "السلسلة الحالية",
+        "days": "أيام",
+        "profileSettings": "إعدادات الملف الشخصي",
+        "editProfile": "تعديل الملف الشخصي",
+        "preferences": "التفضيلات",
+        "notifications": "الإشعارات",
+        "privacy": "إعدادات الخصوصية"
+    },
+    "common": {
+        "loading": "جاري التحميل...",
+        "error": "حدث خطأ ما",
+        "retry": "إعادة المحاولة",
+        "save": "حفظ",
+        "cancel": "إلغاء",
+        "delete": "حذف",
+        "edit": "تعديل",
+        "close": "إغلاق",
+        "viewAll": "عرض الكل",
+        "seeMore": "عرض المزيد"
+    },
+    "theme": {
+        "light": "الوضع الفاتح",
+        "dark": "الوضع الداكن",
+        "toggle": "تبديل المظهر"
+    },
+    "auth": {
+        "login": "تسجيل الدخول",
+        "register": "إنشاء حساب",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "confirmPassword": "تأكيد كلمة المرور",
+        "name": "الاسم الكامل",
+        "forgotPassword": "نسيت كلمة المرور؟",
+        "noAccount": "ليس لديك حساب؟",
+        "hasAccount": "لديك حساب بالفعل؟"
+    }
+}
