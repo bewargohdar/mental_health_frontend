@@ -94,26 +94,7 @@ export default function Dashboard() {
             setLoading(false);
         }
 
-        // Fallback: if no data, load some defaults
-        if (weeklyMoodData.length === 0) {
-            setWeeklyMoodData([
-                { day: 'Mon', mood: 4, entries: 2 },
-                { day: 'Tue', mood: 3, entries: 1 },
-                { day: 'Wed', mood: 5, entries: 3 },
-                { day: 'Thu', mood: 4, entries: 2 },
-                { day: 'Fri', mood: 3, entries: 1 },
-                { day: 'Sat', mood: 4, entries: 2 },
-                { day: 'Sun', mood: 5, entries: 2 },
-            ]);
-        }
-        if (monthlyTrendData.length === 0) {
-            setMonthlyTrendData([
-                { week: 'Week 1', average: 3.2 },
-                { week: 'Week 2', average: 3.8 },
-                { week: 'Week 3', average: 3.5 },
-                { week: 'Week 4', average: 4.1 },
-            ]);
-        }
+
     };
 
     const CustomTooltip = ({ active, payload, label }) => {

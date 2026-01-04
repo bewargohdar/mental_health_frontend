@@ -34,12 +34,7 @@ export default function Home() {
                 setTips(res.data.data || []);
             } catch (error) {
                 console.error('Failed to fetch tips:', error);
-                // Fallback tips
-                setTips([
-                    { id: 1, content: "Take 5 deep breaths when you feel overwhelmed. It activates your body's natural relaxation response." },
-                    { id: 2, content: "Practice gratitude by naming 3 things you're thankful for today." },
-                    { id: 3, content: "Take a short walk outside. Nature and movement boost mental clarity." }
-                ]);
+                setTips([]);
             } finally {
                 setLoading(false);
             }
