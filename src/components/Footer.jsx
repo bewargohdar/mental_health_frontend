@@ -102,15 +102,15 @@ export default function Footer() {
                         <ul className="space-y-3">
                             <li className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                                 <Mail className="w-4 h-4 text-[var(--primary)]" />
-                                support@peacehub.app
+                                support@nafas.app
                             </li>
                             <li className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                                 <Phone className="w-4 h-4 text-[var(--primary)]" />
-                                1-800-PEACE-HUB
+                                +964 (750) 370 95 86
                             </li>
                             <li className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
                                 <MapPin className="w-4 h-4 text-[var(--primary)] mt-0.5" />
-                                123 Wellness Street, Health City
+                                Erbil, Kurdistan Region, Iraq
                             </li>
                         </ul>
                     </div>
