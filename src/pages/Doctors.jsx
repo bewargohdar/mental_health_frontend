@@ -54,23 +54,15 @@ export default function Doctors() {
             // Backend returns { data: { slots: [...] } }
             const slots = res.data?.data?.slots || res.data?.slots || [];
 
-            // If no slots from backend, generate default slots
-            if (!Array.isArray(slots) || slots.length === 0) {
-                const defaultSlots = generateDefaultSlots();
-                setAvailableSlots(defaultSlots);
-            } else {
-                // Map slots to expected format with 'available' flag
-                const formattedSlots = slots.map(slot => ({
-                    time: slot.time,
-                    available: true
-                }));
-                setAvailableSlots(formattedSlots);
-            }
+            // Map slots to expected format with 'available' flag
+            const formattedSlots = Array.isArray(slots) ? slots.map(slot => ({
+                time: slot.time,
+                available: true
+            })) : [];
+            setAvailableSlots(formattedSlots);
         } catch (error) {
             console.error('Failed to fetch slots:', error);
-            // Fallback to default slots on error
-            const defaultSlots = generateDefaultSlots();
-            setAvailableSlots(defaultSlots);
+            setAvailableSlots([]);
         } finally {
             setLoadingSlots(false);
         }
@@ -392,6 +384,18 @@ export default function Doctors() {
                                             {[1, 2, 3, 4, 5, 6].map(i => (
                                                 <div key={i} className="h-12 bg-[var(--light-gray)] rounded-xl animate-pulse" />
                                             ))}
+                                        </div>
+                                    ) : availableSlots.length === 0 ? (
+                                        <div className="text-center py-8">
+                                            <div className="text-4xl mb-3">📅</div>
+                                            <p className="text-[var(--text-secondary)] mb-2">No available slots on this day</p>
+                                            <p className="text-sm text-[var(--text-muted)]">Please select a different date</p>
+                                            <button
+                                                onClick={() => setBookingStep(2)}
+                                                className="mt-4 text-[#2563eb] font-medium"
+                                            >
+                                                ← Choose another date
+                                            </button>
                                         </div>
                                     ) : (
                                         <div className="grid grid-cols-3 gap-2">
