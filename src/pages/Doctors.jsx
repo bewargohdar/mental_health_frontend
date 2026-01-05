@@ -51,14 +51,39 @@ export default function Doctors() {
             const res = await api.get(`/doctors/${doctorId}/slots`, {
                 params: { date: date.toISOString().split('T')[0] }
             });
-            const slots = res.data.data || [];
-            setAvailableSlots(slots);
+            // Backend returns { data: { slots: [...] } }
+            const slots = res.data?.data?.slots || res.data?.slots || [];
+
+            // If no slots from backend, generate default slots
+            if (!Array.isArray(slots) || slots.length === 0) {
+                const defaultSlots = generateDefaultSlots();
+                setAvailableSlots(defaultSlots);
+            } else {
+                // Map slots to expected format with 'available' flag
+                const formattedSlots = slots.map(slot => ({
+                    time: slot.time,
+                    available: true
+                }));
+                setAvailableSlots(formattedSlots);
+            }
         } catch (error) {
             console.error('Failed to fetch slots:', error);
-            setAvailableSlots([]);
+            // Fallback to default slots on error
+            const defaultSlots = generateDefaultSlots();
+            setAvailableSlots(defaultSlots);
         } finally {
             setLoadingSlots(false);
         }
+    };
+
+    // Generate default time slots (9 AM to 5 PM, every 30 mins)
+    const generateDefaultSlots = () => {
+        const slots = [];
+        for (let hour = 9; hour < 17; hour++) {
+            slots.push({ time: `${hour.toString().padStart(2, '0')}:00`, available: true });
+            slots.push({ time: `${hour.toString().padStart(2, '0')}:30`, available: true });
+        }
+        return slots;
     };
 
     const handleBookAppointment = async () => {
