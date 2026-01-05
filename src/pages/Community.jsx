@@ -9,19 +9,12 @@ export default function Community() {
     const { t } = useTranslation();
     const { isAuthenticated, user } = useAuth();
     const [posts, setPosts] = useState([]);
-    const [myPosts, setMyPosts] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [newPost, setNewPost] = useState({ title: '', content: '', is_anonymous: false });
     const [creating, setCreating] = useState(false);
-    const [showChat, setShowChat] = useState(false);
-    const [activeTab, setActiveTab] = useState('all'); // 'all' or 'my'
-    const [chatMessages, setChatMessages] = useState([
-        { id: 1, user: 'Anonymous', message: 'Welcome to the community chat! 👋', own: false, time: '10:30 AM' },
-        { id: 2, user: 'You', message: 'Thanks! Happy to be here.', own: true, time: '10:32 AM' },
-    ]);
-    const [newMessage, setNewMessage] = useState('');
-    const chatEndRef = useRef(null);
+
 
     // Comments state
     const [expandedPost, setExpandedPost] = useState(null);
@@ -38,14 +31,9 @@ export default function Community() {
 
     useEffect(() => {
         fetchPosts();
-        if (isAuthenticated) {
-            fetchMyPosts();
-        }
-    }, [isAuthenticated]);
+    }, []);
 
-    useEffect(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [chatMessages]);
+
 
     const fetchPosts = async () => {
         try {
@@ -60,17 +48,6 @@ export default function Community() {
             ]);
         } finally {
             setLoading(false);
-        }
-    };
-
-    const fetchMyPosts = async () => {
-        try {
-            const res = await api.get('/posts/my-posts');
-            setMyPosts(res.data.data?.data || res.data.data || []);
-        } catch (error) {
-            console.error('Failed to fetch my posts:', error);
-            // For demo, filter posts by current user
-            setMyPosts([]);
         }
     };
 
@@ -93,9 +70,7 @@ export default function Community() {
             setPosts(prev => prev.map(p =>
                 p.id === editingPost.id ? { ...p, ...editForm } : p
             ));
-            setMyPosts(prev => prev.map(p =>
-                p.id === editingPost.id ? { ...p, ...editForm } : p
-            ));
+
             setEditingPost(null);
         } finally {
             setSaving(false);
@@ -194,17 +169,7 @@ export default function Community() {
         }
     };
 
-    const handleSendMessage = () => {
-        if (!newMessage.trim()) return;
-        setChatMessages([...chatMessages, {
-            id: Date.now(),
-            user: 'You',
-            message: newMessage,
-            own: true,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }]);
-        setNewMessage('');
-    };
+
 
     return (
         <div className="min-h-screen bg-[var(--background)]">
@@ -217,18 +182,7 @@ export default function Community() {
                             <p className="opacity-90">{t('community.subtitle')}</p>
                         </div>
                         <div className="flex gap-3">
-                            {isAuthenticated && (
-                                <button
-                                    onClick={() => setShowChat(!showChat)}
-                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold transition-colors ${showChat
-                                        ? 'bg-white/20 text-white'
-                                        : 'bg-white/10 text-white hover:bg-white/20'
-                                        }`}
-                                >
-                                    <MessageSquare className="w-5 h-5" />
-                                    {t('community.chat')}
-                                </button>
-                            )}
+
                             {isAuthenticated && (
                                 <button
                                     onClick={() => setShowCreateModal(true)}
@@ -244,37 +198,11 @@ export default function Community() {
             </div>
 
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Tab Switcher */}
-                {isAuthenticated && (
-                    <div className="flex gap-2 mb-6">
-                        <button
-                            onClick={() => setActiveTab('all')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === 'all'
-                                ? 'bg-[var(--primary)] text-white'
-                                : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
-                                }`}
-                        >
-                            <Users className="w-4 h-4" />
-                            All Posts
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('my')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === 'my'
-                                ? 'bg-[var(--primary)] text-white'
-                                : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
-                                }`}
-                        >
-                            <UserCircle className="w-4 h-4" />
-                            My Posts ({myPosts.length})
-                        </button>
-                    </div>
-                )}
-
                 <div className="flex gap-8">
                     {/* Posts Feed */}
-                    <div className={`flex-1 ${showChat ? 'hidden lg:block' : ''}`}>
+                    <div className="flex-1">
                         {(() => {
-                            const displayedPosts = activeTab === 'my' ? myPosts : posts;
+                            const displayedPosts = posts;
 
                             if (loading) return (
                                 <div className="space-y-6">
@@ -298,10 +226,10 @@ export default function Community() {
                                 <div className="text-center py-16 card">
                                     <div className="text-6xl mb-4">📝</div>
                                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                                        {activeTab === 'my' ? 'No posts yet' : 'No posts in community'}
+                                        No posts in community
                                     </h3>
                                     <p className="text-[var(--text-secondary)]">
-                                        {activeTab === 'my' ? 'Share your thoughts with the community' : 'Be the first to share'}
+                                        Be the first to share
                                     </p>
                                 </div>
                             );
@@ -473,64 +401,7 @@ export default function Community() {
                         })()}
                     </div>
 
-                    {/* Chat Window */}
-                    {showChat && isAuthenticated && (
-                        <div className="w-full lg:w-80 flex-shrink-0">
-                            <div className="card h-[500px] flex flex-col sticky top-20">
-                                {/* Chat Header */}
-                                <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
-                                    <h3 className="font-semibold text-[var(--text-primary)]">{t('community.chat')}</h3>
-                                    <button
-                                        onClick={() => setShowChat(false)}
-                                        className="p-1 hover:bg-[var(--surface-hover)] rounded lg:hidden"
-                                    >
-                                        <X className="w-5 h-5" />
-                                    </button>
-                                </div>
 
-                                {/* Messages */}
-                                <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                                    {chatMessages.map((msg) => (
-                                        <div
-                                            key={msg.id}
-                                            className={`flex ${msg.own ? 'justify-end' : 'justify-start'}`}
-                                        >
-                                            <div className={`chat-bubble ${msg.own ? 'own' : ''} max-w-[85%]`}>
-                                                {!msg.own && (
-                                                    <p className="text-xs font-medium mb-1 opacity-70">{msg.user}</p>
-                                                )}
-                                                <p className="text-sm">{msg.message}</p>
-                                                <p className={`text-xs mt-1 ${msg.own ? 'text-white/70' : 'text-[var(--text-muted)]'}`}>
-                                                    {msg.time}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    <div ref={chatEndRef} />
-                                </div>
-
-                                {/* Input */}
-                                <div className="p-4 border-t border-[var(--border)]">
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            value={newMessage}
-                                            onChange={(e) => setNewMessage(e.target.value)}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                                            placeholder={t('community.typeMesage')}
-                                            className="flex-1 px-4 py-2 input-field rounded-full text-sm"
-                                        />
-                                        <button
-                                            onClick={handleSendMessage}
-                                            className="p-2.5 bg-[var(--primary)] text-white rounded-full hover:bg-[var(--primary-dark)] transition-colors"
-                                        >
-                                            <Send className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
 
