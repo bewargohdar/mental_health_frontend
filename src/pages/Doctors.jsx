@@ -124,10 +124,10 @@ export default function Doctors() {
         }
     };
 
-    // Generate next 14 days for date selection
+    // Generate next 14 days for date selection (including today)
     const getAvailableDates = () => {
         const dates = [];
-        for (let i = 1; i <= 14; i++) {
+        for (let i = 0; i < 14; i++) {
             const date = new Date();
             date.setDate(date.getDate() + i);
             dates.push(date);
