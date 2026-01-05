@@ -227,14 +227,11 @@ export default function Doctors() {
 
                         {/* Right side - Image and badges */}
                         <div className="relative">
-                            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6 dark:from-slate-800 dark:to-slate-700">
-                                <div className="flex items-center justify-center h-48">
-                                    <div className="text-center">
-                                        <div className="text-6xl mb-2">🧘‍♀️</div>
-                                        <p className="text-[var(--text-secondary)]">Wellness Journey</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <img
+                                src="/wellness-hero.png"
+                                alt="Wellness Journey"
+                                className="rounded-2xl w-full h-auto object-cover"
+                            />
                             {/* Badges */}
                             <div className="flex gap-3 mt-4 justify-center">
                                 <div className="cta-badge">
