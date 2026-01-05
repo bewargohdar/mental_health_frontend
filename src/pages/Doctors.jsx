@@ -122,116 +122,135 @@ export default function Doctors() {
     });
 
     return (
-        <div className="min-h-screen pb-12">
-            {/* Header */}
-            <div className="bg-gradient-to-br from-[var(--pink)] to-rose-500 text-white py-12">
+        <div className="min-h-screen pb-12 bg-[var(--background)]">
+            {/* Header - Simplified */}
+            <div className="py-8 border-b border-[var(--border)]">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold mb-2">{t('doctors.title')}</h1>
-                    <p className="opacity-90 mb-6">{t('doctors.subtitle')}</p>
-
-                    {/* Search */}
-                    <div className="max-w-xl">
-                        <div className="relative">
-                            <Search className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
-                            <input
-                                type="text"
-                                placeholder={t('doctors.search')}
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full ps-12 pe-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
-                            />
-                        </div>
-                    </div>
+                    <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-1">{t('doctors.title')}</h1>
+                    <p className="text-[var(--text-secondary)]">{t('doctors.subtitle')}</p>
                 </div>
             </div>
 
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
-                {/* Specialty Filter */}
-                <div className="card p-4 mb-8 flex flex-wrap gap-2">
+            {/* Specialty Filter Tabs */}
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div className="flex flex-wrap gap-1 border-b border-[var(--border)]">
                     {specialties.map((spec) => (
                         <button
                             key={spec}
                             onClick={() => setSelectedSpecialty(spec)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedSpecialty === spec
-                                ? 'bg-[var(--primary)] text-white'
-                                : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
+                            className={`px-6 py-3 text-sm font-medium transition-all border-b-2 ${selectedSpecialty === spec
+                                ? 'border-[#2563eb] text-[#2563eb]'
+                                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                                 }`}
                         >
                             {spec === 'all' ? 'All Specialties' : spec}
                         </button>
                     ))}
                 </div>
+            </div>
 
-                {/* Doctors Grid */}
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Doctors Grid - Figma style cards */}
                 {loading ? (
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <div key={i} className="card p-6 animate-pulse">
-                                <div className="flex items-start gap-4 mb-4">
-                                    <div className="w-16 h-16 rounded-full bg-[var(--light-gray)]" />
-                                    <div className="flex-1">
-                                        <div className="h-4 bg-[var(--light-gray)] rounded w-32 mb-2" />
-                                        <div className="h-3 bg-[var(--light-gray)] rounded w-24" />
-                                    </div>
+                            <div key={i} className="doctor-card animate-pulse">
+                                <div className="doctor-photo-wrapper">
+                                    <div className="doctor-photo-backdrop" />
                                 </div>
-                                <div className="h-10 bg-[var(--light-gray)] rounded-full" />
+                                <div className="h-5 bg-[var(--light-gray)] rounded w-32 mx-auto mb-2" />
+                                <div className="h-4 bg-[var(--light-gray)] rounded w-24 mx-auto mb-3" />
+                                <div className="h-3 bg-[var(--light-gray)] rounded w-40 mx-auto mb-1" />
+                                <div className="h-3 bg-[var(--light-gray)] rounded w-36 mx-auto mb-4" />
+                                <div className="h-10 bg-[var(--light-gray)] rounded-full w-28 mx-auto" />
                             </div>
                         ))}
                     </div>
                 ) : filteredDoctors.length > 0 ? (
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredDoctors.map((doctor) => (
-                            <div key={doctor.id} className="card card-hover p-6">
-                                <div className="flex items-start gap-4 mb-4">
+                            <div key={doctor.id} className="doctor-card">
+                                {/* Photo with curved backdrop */}
+                                <div className="doctor-photo-wrapper">
+                                    <div className="doctor-photo-backdrop" />
                                     <img
-                                        src={doctor.image || doctor.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.name)}&size=128&background=6366f1&color=ffffff`}
+                                        src={doctor.image || doctor.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.name)}&size=140&background=e0e7ef&color=1f2937`}
                                         alt={doctor.name}
-                                        className="w-16 h-16 rounded-full object-cover"
+                                        className="doctor-photo"
                                     />
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-[var(--text-primary)] truncate">{doctor.name}</h3>
-                                        <p className="text-sm text-[var(--primary)]">{doctor.specialty}</p>
-                                        <div className="flex items-center gap-3 mt-2 text-xs text-[var(--text-muted)]">
-                                            <span className="flex items-center gap-1">
-                                                <Award className="w-3 h-3" />
-                                                {doctor.experience || doctor.years_experience} {t('doctors.years')}
-                                            </span>
-                                            <span className="flex items-center gap-1">
-                                                <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                                                {doctor.rating || '4.8'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    {(doctor.available !== false) && (
-                                        <span className="w-3 h-3 rounded-full bg-green-500 ring-2 ring-green-500/30"></span>
-                                    )}
                                 </div>
 
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => openBookingModal(doctor)}
-                                        className="flex-1 btn-primary text-sm py-2.5 flex items-center justify-center gap-2"
-                                    >
-                                        <Calendar className="w-4 h-4" />
-                                        {t('doctors.bookAppointment')}
-                                    </button>
-                                    <button className="p-2.5 rounded-full bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)] transition-colors">
-                                        <Video className="w-5 h-5" />
-                                    </button>
-                                </div>
+                                {/* Doctor Info */}
+                                <h3 className="doctor-name">{doctor.name}</h3>
+                                <p className="doctor-specialty">{doctor.specialty || 'Mental Health Professional'}</p>
+                                <p className="doctor-description">
+                                    {doctor.bio || `${doctor.experience || doctor.years_experience || '5'}+ years experience`}
+                                    <br />
+                                    {doctor.achievements || 'Excellence in Patient Care'}
+                                </p>
+
+                                {/* Consult Button */}
+                                <button
+                                    onClick={() => openBookingModal(doctor)}
+                                    className="btn-consult"
+                                >
+                                    Consult Now
+                                </button>
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-16 card">
+                    <div className="text-center py-16 doctor-card">
                         <div className="text-6xl mb-4">🔍</div>
                         <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No doctors found</h3>
                         <p className="text-[var(--text-secondary)]">Try adjusting your search or filters</p>
                     </div>
                 )}
+
+                {/* CTA Section - Figma style */}
+                <div className="cta-section mt-16">
+                    <div className="grid md:grid-cols-2 gap-8 items-center">
+                        {/* Left side - Text */}
+                        <div>
+                            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4 leading-tight">
+                                Ready to embark on the<br />journey of wellness?
+                            </h2>
+                            <p className="text-[var(--text-secondary)] mb-6">
+                                Start your mental health transformation with our experienced therapists
+                                today. Get to be in your ultimate inner peace and lasting well-being with
+                                our programs, tailored special to your health needs.
+                            </p>
+                            <button className="btn-primary">
+                                Get Started →
+                            </button>
+                        </div>
+
+                        {/* Right side - Image and badges */}
+                        <div className="relative">
+                            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6 dark:from-slate-800 dark:to-slate-700">
+                                <div className="flex items-center justify-center h-48">
+                                    <div className="text-center">
+                                        <div className="text-6xl mb-2">🧘‍♀️</div>
+                                        <p className="text-[var(--text-secondary)]">Wellness Journey</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Badges */}
+                            <div className="flex gap-3 mt-4 justify-center">
+                                <div className="cta-badge">
+                                    #LetsStayHealthy
+                                </div>
+                                <div className="cta-discount">
+                                    <div className="text-xl font-bold">50%</div>
+                                    <div className="text-xs">Discount</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {/* Booking Modal */}
+            {/* Booking Modal - Keep existing */}
             {selectedDoctor && (
                 <div
                     className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
@@ -277,7 +296,7 @@ export default function Doctors() {
                                         />
                                         <div>
                                             <h4 className="font-semibold text-lg text-[var(--text-primary)]">{selectedDoctor.name}</h4>
-                                            <p className="text-[var(--primary)]">{selectedDoctor.specialty}</p>
+                                            <p className="text-[#2563eb]">{selectedDoctor.specialty}</p>
                                             <div className="flex items-center gap-2 mt-1 text-sm text-[var(--text-muted)]">
                                                 <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                                                 <span>{selectedDoctor.rating || '4.8'} ({selectedDoctor.reviews || '100'}+ reviews)</span>
@@ -315,7 +334,7 @@ export default function Doctors() {
                                                 key={idx}
                                                 onClick={() => handleDateSelect(date)}
                                                 className={`p-3 rounded-xl text-center transition-all ${selectedDate?.toDateString() === date.toDateString()
-                                                    ? 'bg-[var(--primary)] text-white'
+                                                    ? 'bg-[#2563eb] text-white'
                                                     : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
                                                     }`}
                                             >
@@ -356,7 +375,7 @@ export default function Doctors() {
                                                     onClick={() => slot.available && setSelectedSlot(slot.time)}
                                                     disabled={!slot.available}
                                                     className={`p-3 rounded-xl text-center transition-all ${selectedSlot === slot.time
-                                                        ? 'bg-[var(--primary)] text-white'
+                                                        ? 'bg-[#2563eb] text-white'
                                                         : slot.available
                                                             ? 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
                                                             : 'bg-[var(--light-gray)] text-[var(--text-muted)] opacity-50 cursor-not-allowed'
@@ -384,17 +403,17 @@ export default function Doctors() {
                                     <h4 className="font-medium text-[var(--text-primary)]">Confirm Your Appointment</h4>
                                     <div className="p-4 bg-[var(--surface-hover)] rounded-xl space-y-3">
                                         <div className="flex items-center gap-3">
-                                            <User className="w-5 h-5 text-[var(--primary)]" />
+                                            <User className="w-5 h-5 text-[#2563eb]" />
                                             <span className="text-[var(--text-secondary)]">{selectedDoctor.name}</span>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <Calendar className="w-5 h-5 text-[var(--primary)]" />
+                                            <Calendar className="w-5 h-5 text-[#2563eb]" />
                                             <span className="text-[var(--text-secondary)]">
                                                 {selectedDate?.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <Clock className="w-5 h-5 text-[var(--primary)]" />
+                                            <Clock className="w-5 h-5 text-[#2563eb]" />
                                             <span className="text-[var(--text-secondary)]">{selectedSlot}</span>
                                         </div>
                                     </div>
