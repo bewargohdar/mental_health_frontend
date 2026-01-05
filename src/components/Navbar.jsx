@@ -57,7 +57,7 @@ export default function Navbar() {
                         <div className="w-10 h-10 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-xl flex items-center justify-center shadow-lg">
                             <Heart className="w-6 h-6 text-white" />
                         </div>
-                        <span className="text-xl font-bold gradient-text">PeaceHub</span>
+                        <span className="text-xl font-bold gradient-text">Nafas</span>
                     </Link>
 
                     {/* Desktop Navigation */}

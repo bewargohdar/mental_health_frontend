@@ -43,7 +43,7 @@ export default function Register() {
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
                         <Heart className="w-7 h-7 text-white" />
                     </div>
-                    <span className="text-2xl font-bold gradient-text">PeaceHub</span>
+                    <span className="text-2xl font-bold gradient-text">Nafas</span>
                 </Link>
 
                 {/* Card */}

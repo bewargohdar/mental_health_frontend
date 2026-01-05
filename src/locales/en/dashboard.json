@@ -1,0 +1,16 @@
+{
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "moodAnalytics": "Mood Analytics",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "averageMood": "Average Mood",
+    "totalEntries": "Total Entries",
+    "streak": "Current Streak",
+    "days": "days",
+    "profileSettings": "Profile Settings",
+    "editProfile": "Edit Profile",
+    "preferences": "Preferences",
+    "notifications": "Notifications",
+    "privacy": "Privacy Settings"
+}

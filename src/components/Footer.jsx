@@ -43,7 +43,7 @@ export default function Footer() {
                             <div className="w-10 h-10 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-xl flex items-center justify-center">
                                 <Heart className="w-6 h-6 text-white" />
                             </div>
-                            <span className="text-xl font-bold gradient-text">PeaceHub</span>
+                            <span className="text-xl font-bold gradient-text">Nafas</span>
                         </Link>
                         <p className="text-sm text-[var(--text-secondary)] mb-4">
                             Your trusted companion for mental wellness and emotional support.
@@ -119,7 +119,7 @@ export default function Footer() {
                 {/* Bottom */}
                 <div className="pt-8 border-t border-[var(--border)] flex flex-col sm:flex-row justify-between items-center gap-4">
                     <p className="text-sm text-[var(--text-muted)]">
-                        © {currentYear} PeaceHub. All rights reserved.
+                        © {currentYear} Nafas. All rights reserved.
                     </p>
                     <div className="flex gap-6">
                         {footerLinks.legal.map((link) => (
