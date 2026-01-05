@@ -5,6 +5,7 @@ import Learn from './pages/Learn';
 import TrackMood from './pages/TrackMood';
 import Community from './pages/Community';
 import Doctors from './pages/Doctors';
+import Appointments from './pages/Appointments';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -30,6 +31,7 @@ function App() {
                 <Route path="community" element={<Community />} />
                 <Route path="doctors" element={<Doctors />} />
                 <Route path="dashboard" element={<Dashboard />} />
+                <Route path="appointments" element={<Appointments />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="bookmarks" element={<Bookmarks />} />
               </Route>

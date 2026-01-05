@@ -153,7 +153,8 @@ export default function Community() {
         setSubmittingComment(true);
         try {
             await api.post('/comments', {
-                post_id: postId,
+                commentable_type: 'post',
+                commentable_id: postId,
                 content: newComment,
             });
             setNewComment('');
