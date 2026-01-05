@@ -97,6 +97,18 @@ export default function Dashboard() {
 
     };
 
+    const isDoctor = user?.roles?.some(r => r.name === 'doctor');
+
+    const handleStatusUpdate = async (id, status) => {
+        try {
+            await api.post(`/appointments/${id}/${status}`);
+            // Refresh data
+            fetchAllData();
+        } catch (error) {
+            console.error(`Failed to ${status} appointment:`, error);
+        }
+    };
+
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
@@ -201,7 +213,7 @@ export default function Dashboard() {
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="font-semibold text-[var(--text-primary)] flex items-center gap-2">
                                     <CalendarCheck className="w-5 h-5 text-[var(--primary)]" />
-                                    {t('dashboard.appointments') || 'Your Appointments'}
+                                    {isDoctor ? 'Incoming Requests' : (t('dashboard.appointments') || 'Your Appointments')}
                                 </h2>
                                 <Link to="/appointments" className="text-sm text-[var(--primary)] hover:underline">
                                     View all
@@ -215,13 +227,18 @@ export default function Dashboard() {
                                             <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
                                                     <img
-                                                        src={apt.doctor?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(apt.doctor?.name || 'Dr')}&background=random`}
-                                                        alt={apt.doctor?.name}
+                                                        src={
+                                                            (isDoctor ? apt.patient?.avatar : apt.doctor?.avatar) ||
+                                                            `https://ui-avatars.com/api/?name=${encodeURIComponent((isDoctor ? apt.patient?.name : apt.doctor?.name) || 'User')}&background=random`
+                                                        }
+                                                        alt={isDoctor ? apt.patient?.name : apt.doctor?.name}
                                                         className="w-full h-full object-cover"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-semibold text-[var(--text-primary)]">{apt.doctor?.name}</h3>
+                                                    <h3 className="font-semibold text-[var(--text-primary)]">
+                                                        {isDoctor ? apt.patient?.name : apt.doctor?.name}
+                                                    </h3>
                                                     <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                                                         <Calendar className="w-3 h-3" />
                                                         <span>{new Date(apt.scheduled_at).toLocaleDateString()}</span>
@@ -230,25 +247,65 @@ export default function Dashboard() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                                                    ${apt.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                                                        apt.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                            apt.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                                                                'bg-gray-100 text-gray-800'}`}>
-                                                    {apt.status}
-                                                </span>
-                                                <p className="text-xs text-[var(--text-muted)] mt-1 capitalize">{apt.type?.replace('_', ' ') || 'Consultation'}</p>
-                                            </div>
+
+                                            {/* Action Buttons for Doctor */}
+                                            {isDoctor ? (
+                                                <div className="flex gap-2">
+                                                    {apt.status === 'pending' && (
+                                                        <button
+                                                            onClick={() => handleStatusUpdate(apt.id, 'confirm')}
+                                                            className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200"
+                                                        >
+                                                            Accept
+                                                        </button>
+                                                    )}
+                                                    {apt.status === 'confirmed' && (
+                                                        <button
+                                                            onClick={() => handleStatusUpdate(apt.id, 'complete')}
+                                                            className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200"
+                                                        >
+                                                            Complete
+                                                        </button>
+                                                    )}
+                                                    {(apt.status === 'pending' || apt.status === 'confirmed') && (
+                                                        <button
+                                                            onClick={() => handleStatusUpdate(apt.id, 'cancel')}
+                                                            className="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    )}
+                                                    {apt.status !== 'pending' && apt.status !== 'confirmed' && (
+                                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+                                                            ${apt.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                            {apt.status}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                /* Status Badge for Patient */
+                                                <div className="text-right">
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+                                                        ${apt.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                                            apt.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                                apt.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                                                    'bg-gray-100 text-gray-800'}`}>
+                                                        {apt.status}
+                                                    </span>
+                                                    <p className="text-xs text-[var(--text-muted)] mt-1 capitalize">{apt.type?.replace('_', ' ') || 'Consultation'}</p>
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
                             ) : (
                                 <div className="text-center py-8 text-[var(--text-muted)]">
-                                    <p>No upcoming appointments</p>
-                                    <Link to="/doctors" className="text-[var(--primary)] text-sm hover:underline mt-2 inline-block">
-                                        Book a consultation
-                                    </Link>
+                                    <p>No {isDoctor ? 'incoming requests' : 'upcoming appointments'}</p>
+                                    {!isDoctor && (
+                                        <Link to="/doctors" className="text-[var(--primary)] text-sm hover:underline mt-2 inline-block">
+                                            Book a consultation
+                                        </Link>
+                                    )}
                                 </div>
                             )}
                         </div>
