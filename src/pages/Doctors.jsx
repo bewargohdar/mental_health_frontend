@@ -90,17 +90,21 @@ export default function Doctors() {
         if (!selectedDoctor || !selectedDate || !selectedSlot) return;
         setSubmitting(true);
         try {
+            // Combine date and time into scheduled_at datetime
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            const scheduledAt = `${dateStr} ${selectedSlot}:00`;
+
             await api.post('/appointments', {
                 doctor_id: selectedDoctor.id,
-                date: selectedDate.toISOString().split('T')[0],
-                time: selectedSlot,
-                notes: bookingNote,
+                scheduled_at: scheduledAt,
+                patient_notes: bookingNote,
             });
             setBookingSuccess(true);
             setBookingStep(5);
         } catch (error) {
             console.error('Failed to book appointment:', error);
-            alert('Failed to book appointment. Please try again.');
+            const errorMsg = error.response?.data?.message || 'Failed to book appointment. Please try again.';
+            alert(errorMsg);
         } finally {
             setSubmitting(false);
         }
