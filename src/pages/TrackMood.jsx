@@ -36,7 +36,8 @@ export default function TrackMood() {
     const fetchMoodHistory = async () => {
         try {
             const res = await api.get('/moods');
-            setMoodHistory(res.data.data || []);
+            // Handle pagination: res.data.data is the pagination object, .data is the array
+            setMoodHistory(res.data.data?.data || res.data.data || []);
         } catch (error) {
             console.error('Failed to fetch mood history:', error);
         } finally {
@@ -222,7 +223,7 @@ export default function TrackMood() {
                     ) : moodHistory.length > 0 ? (
                         <div className="space-y-3">
                             {moodHistory.slice(0, 7).map((entry) => {
-                                const mood = moodEmojis.find(m => m.type === entry.type) || moodEmojis[0];
+                                const mood = moodEmojis.find(m => m.type === entry.mood_type) || moodEmojis[0];
                                 return (
                                     <div
                                         key={entry.id}
@@ -234,15 +235,15 @@ export default function TrackMood() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 flex-wrap">
                                                 <span className="font-medium text-[var(--text-primary)] capitalize">
-                                                    {entry.type}
+                                                    {entry.mood_type}
                                                 </span>
                                                 <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)]">
                                                     Level {entry.intensity}
                                                 </span>
                                             </div>
-                                            {entry.note && (
+                                            {entry.notes && (
                                                 <p className="text-sm text-[var(--text-secondary)] truncate mt-1">
-                                                    {entry.note}
+                                                    {entry.notes}
                                                 </p>
                                             )}
                                         </div>
