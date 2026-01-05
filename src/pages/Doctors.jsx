@@ -210,12 +210,26 @@ export default function Doctors() {
                                     {doctor.achievements || 'Excellence in Patient Care'}
                                 </p>
 
+                                {/* Availability Badge */}
+                                {doctor.doctor_profile?.availabilities?.length > 0 ? (
+                                    <div className="flex items-center justify-center gap-1 mb-3">
+                                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                        <span className="text-xs text-green-600">Available</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center justify-center gap-1 mb-3">
+                                        <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                                        <span className="text-xs text-gray-500">No slots</span>
+                                    </div>
+                                )}
+
                                 {/* Consult Button */}
                                 <button
                                     onClick={() => openBookingModal(doctor)}
                                     className="btn-consult"
+                                    disabled={!doctor.doctor_profile?.availabilities?.length}
                                 >
-                                    Consult Now
+                                    {doctor.doctor_profile?.availabilities?.length > 0 ? 'Consult Now' : 'Unavailable'}
                                 </button>
                             </div>
                         ))}
