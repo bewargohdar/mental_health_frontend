@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
 import { Menu, X, User, LogOut, Heart, Bell, Check, CheckCheck, MessageCircle, Calendar, TrendingUp } from 'lucide-react';
-import LanguageSwitcher from './LanguageSwitcher';
+// Remove LanguageSwitcher import
 import ThemeToggle from './ThemeToggle';
 
 // Notification type icons
@@ -80,7 +80,6 @@ export default function Navbar() {
 
                     {/* Right side controls */}
                     <div className="hidden md:flex items-center gap-2">
-                        <LanguageSwitcher />
                         <ThemeToggle />
 
                         {/* Notifications Bell */}
@@ -210,7 +209,6 @@ export default function Navbar() {
 
                     {/* Mobile: Theme & Language + Menu */}
                     <div className="flex md:hidden items-center gap-2">
-                        <LanguageSwitcher />
                         <ThemeToggle />
                         <button
                             onClick={() => setIsOpen(!isOpen)}
