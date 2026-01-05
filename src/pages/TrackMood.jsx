@@ -49,9 +49,9 @@ export default function TrackMood() {
         setSubmitting(true);
         try {
             await api.post('/moods', {
-                type: selectedMood.type,
+                mood_type: selectedMood.type,
                 intensity: moodIntensity,
-                note: note,
+                notes: note,
             });
             setSubmitted(true);
             setSelectedMood(null);
@@ -121,16 +121,16 @@ export default function TrackMood() {
                                             key={mood.type}
                                             onClick={() => setSelectedMood(mood)}
                                             className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${selectedMood?.type === mood.type
-                                                    ? 'border-[var(--primary)] bg-[var(--primary)]/10 scale-105'
-                                                    : 'border-[var(--border)] hover:border-[var(--primary)]/50 hover:bg-[var(--surface-hover)]'
+                                                ? 'border-[var(--primary)] bg-[var(--primary)]/10 scale-105'
+                                                : 'border-[var(--border)] hover:border-[var(--primary)]/50 hover:bg-[var(--surface-hover)]'
                                                 }`}
                                         >
                                             <span className={`text-4xl sm:text-5xl mood-emoji ${selectedMood?.type === mood.type ? 'selected' : ''}`}>
                                                 {mood.emoji}
                                             </span>
                                             <span className={`text-xs font-medium ${selectedMood?.type === mood.type
-                                                    ? 'text-[var(--primary)]'
-                                                    : 'text-[var(--text-secondary)]'
+                                                ? 'text-[var(--primary)]'
+                                                : 'text-[var(--text-secondary)]'
                                                 }`}>
                                                 {t(`trackMood.moods.${mood.label}`)}
                                             </span>
@@ -152,8 +152,8 @@ export default function TrackMood() {
                                                     key={level}
                                                     onClick={() => setMoodIntensity(level)}
                                                     className={`flex-1 py-4 rounded-xl font-bold text-lg transition-all ${moodIntensity === level
-                                                            ? `bg-gradient-to-br ${selectedMood.color} text-white scale-110 shadow-lg`
-                                                            : 'bg-[var(--light-gray)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
+                                                        ? `bg-gradient-to-br ${selectedMood.color} text-white scale-110 shadow-lg`
+                                                        : 'bg-[var(--light-gray)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
                                                         }`}
                                                 >
                                                     {level}
