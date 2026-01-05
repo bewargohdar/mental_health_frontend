@@ -54,10 +54,10 @@ export default function Doctors() {
             // Backend returns { data: { slots: [...] } }
             const slots = res.data?.data?.slots || res.data?.slots || [];
 
-            // Map slots to expected format with 'available' flag
+            // Map slots from backend - use available flag from response
             const formattedSlots = Array.isArray(slots) ? slots.map(slot => ({
                 time: slot.time,
-                available: true
+                available: slot.available !== false // Default to true if not specified
             })) : [];
             setAvailableSlots(formattedSlots);
         } catch (error) {
