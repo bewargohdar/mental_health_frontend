@@ -194,7 +194,66 @@ export default function Dashboard() {
 
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Mood Analytics Chart */}
-                    <div className="lg:col-span-2">
+                    {/* Main Content Areas */}
+                    <div className="lg:col-span-2 space-y-8">
+                        {/* Upcoming Appointments */}
+                        <div className="card p-6">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="font-semibold text-[var(--text-primary)] flex items-center gap-2">
+                                    <CalendarCheck className="w-5 h-5 text-[var(--primary)]" />
+                                    {t('dashboard.appointments') || 'Your Appointments'}
+                                </h2>
+                                <Link to="/appointments" className="text-sm text-[var(--primary)] hover:underline">
+                                    View all
+                                </Link>
+                            </div>
+
+                            {appointments.length > 0 ? (
+                                <div className="space-y-4">
+                                    {appointments.map((apt) => (
+                                        <div key={apt.id} className="flex items-center justify-between p-4 bg-[var(--background)] rounded-xl border border-[var(--border)]">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                                                    <img
+                                                        src={apt.doctor?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(apt.doctor?.name || 'Dr')}&background=random`}
+                                                        alt={apt.doctor?.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-semibold text-[var(--text-primary)]">{apt.doctor?.name}</h3>
+                                                    <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                                                        <Calendar className="w-3 h-3" />
+                                                        <span>{new Date(apt.scheduled_at).toLocaleDateString()}</span>
+                                                        <Clock className="w-3 h-3 ml-1" />
+                                                        <span>{new Date(apt.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+                                                    ${apt.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                                        apt.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                            apt.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                                                'bg-gray-100 text-gray-800'}`}>
+                                                    {apt.status}
+                                                </span>
+                                                <p className="text-xs text-[var(--text-muted)] mt-1 capitalize">{apt.type?.replace('_', ' ') || 'Consultation'}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-[var(--text-muted)]">
+                                    <p>No upcoming appointments</p>
+                                    <Link to="/doctors" className="text-[var(--primary)] text-sm hover:underline mt-2 inline-block">
+                                        Book a consultation
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Mood Analytics Chart */}
                         <div className="card p-6">
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="font-semibold text-[var(--text-primary)] flex items-center gap-2">
