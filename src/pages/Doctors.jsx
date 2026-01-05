@@ -36,7 +36,17 @@ export default function Doctors() {
         try {
             const res = await api.get('/doctors');
             const data = res.data.data?.data || res.data.data || [];
-            setDoctors(Array.isArray(data) ? data : []);
+
+            // Map backend data to frontend structure
+            const mappedDoctors = (Array.isArray(data) ? data : []).map(doc => ({
+                ...doc,
+                specialty: doc.doctor_profile?.specialization || 'Mental Health Professional',
+                bio: doc.doctor_profile?.bio || doc.bio,
+                experience: doc.doctor_profile?.experience_years,
+                image: doc.avatar || doc.image, // Ensure avatar is used
+            }));
+
+            setDoctors(mappedDoctors);
         } catch (error) {
             console.error('Failed to fetch doctors:', error);
             setDoctors([]);
@@ -138,7 +148,27 @@ export default function Doctors() {
     const filteredDoctors = doctors.filter(doc => {
         const matchesSearch = doc.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             doc.specialty?.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesSpecialty = selectedSpecialty === 'all' || doc.specialty?.includes(selectedSpecialty);
+
+        let matchesSpecialty = selectedSpecialty === 'all';
+
+        if (!matchesSpecialty && doc.specialty) {
+            const specialty = doc.specialty.toLowerCase();
+            const selected = selectedSpecialty.toLowerCase();
+
+            // Smarter matching for variations
+            if (selected.includes('psychologist')) {
+                matchesSpecialty = specialty.includes('psychologist') || specialty.includes('psychology');
+            } else if (selected.includes('therapist')) {
+                matchesSpecialty = specialty.includes('therapist') || specialty.includes('therapy');
+            } else if (selected.includes('counselor')) {
+                matchesSpecialty = specialty.includes('counselor') || specialty.includes('counseling');
+            } else if (selected.includes('psychiatrist')) {
+                matchesSpecialty = specialty.includes('psychiatrist') || specialty.includes('psychiatry');
+            } else {
+                matchesSpecialty = specialty.includes(selected);
+            }
+        }
+
         return matchesSearch && matchesSpecialty;
     });
 
