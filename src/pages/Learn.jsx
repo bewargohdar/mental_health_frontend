@@ -116,6 +116,14 @@ export default function Learn() {
         { key: 'exercises', label: t('learn.contentTypes.exercises'), icon: Dumbbell },
     ];
 
+    // Validate Tab
+    useEffect(() => {
+        const validTabs = contentTabs.map(t => t.key);
+        if (!validTabs.includes(activeTab)) {
+            navigate(`/learn/${selectedCategory}/overview`, { replace: true });
+        }
+    }, [activeTab, selectedCategory, navigate]);
+
     // Fetch Content
     useEffect(() => {
         const fetchContent = async () => {

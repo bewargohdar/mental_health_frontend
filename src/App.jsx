@@ -25,7 +25,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
-                <Route path="learn" element={<Navigate to="/learn/depression/information" replace />} />
+                <Route path="learn" element={<Navigate to="/learn/depression/overview" replace />} />
                 <Route path="learn/:category/:tab" element={<Learn />} />
                 <Route path="track-mood" element={<TrackMood />} />
                 <Route path="community" element={<Community />} />
