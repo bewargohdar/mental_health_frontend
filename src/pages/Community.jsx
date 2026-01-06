@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, Plus, User, Send, X, MoreHorizontal, Eye, EyeOff, MessageSquare, ChevronDown, ChevronUp, Reply, Trash2, Edit2, Users, UserCircle } from 'lucide-react';
+import { Heart, MessageCircle, Plus, User, Send, X, MoreHorizontal, Eye, EyeOff, MessageSquare, ChevronDown, ChevronUp, Reply, Trash2, Edit2, Users, UserCircle, Sparkles, Smile, PenTool } from 'lucide-react';
 import api from '../api/axios';
 
 export default function Community() {
@@ -173,289 +173,316 @@ export default function Community() {
 
     return (
         <div className="min-h-screen bg-[var(--background)]">
-            {/* Header */}
-            <div className="bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dark)] text-white py-12">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center flex-wrap gap-4">
-                        <div>
-                            <h1 className="text-3xl font-bold mb-2">{t('community.title')}</h1>
-                            <p className="opacity-90">{t('community.subtitle')}</p>
-                        </div>
-                        <div className="flex gap-3">
-
-                            {isAuthenticated && (
-                                <button
-                                    onClick={() => setShowCreateModal(true)}
-                                    className="flex items-center gap-2 bg-white text-[var(--accent-dark)] px-6 py-2.5 rounded-full font-semibold hover:bg-white/90 transition-colors"
-                                >
-                                    <Plus className="w-5 h-5" />
-                                    {t('community.newPost')}
-                                </button>
-                            )}
-                        </div>
+            {/* Hero Section - Calm & Welcoming */}
+            <div className="relative overflow-hidden bg-gradient-to-b from-indigo-50/50 to-transparent pt-28 pb-12">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100/50 text-indigo-700 text-sm font-medium mb-6 animate-fade-in-up">
+                        <Sparkles className="w-4 h-4" />
+                        <span>A Safe Space for Everyone</span>
                     </div>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-6 text-[var(--text-primary)] animate-fade-in-up delay-100">
+                        {t('community.title', 'Community Feed')}
+                    </h1>
+                    <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-200">
+                        {t('community.subtitle', 'Connect, share, and support each other in a safe, judgment-free environment.')}
+                    </p>
+
+                    {/* Quick Action Trigger */}
+                    {isAuthenticated && (
+                        <div className="max-w-2xl mx-auto animate-fade-in-up delay-300">
+                            <button
+                                onClick={() => setShowCreateModal(true)}
+                                className="w-full bg-white/80 backdrop-blur-md p-4 rounded-3xl shadow-sm border border-[var(--border)] text-left hover:shadow-md transition-all group flex items-center justify-between"
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                        <PenTool className="w-5 h-5" />
+                                    </div>
+                                    <span className="text-[var(--text-secondary)] text-lg">Share your story...</span>
+                                </div>
+                                <div className="bg-[var(--primary)] text-white p-2 rounded-full group-hover:scale-110 transition-transform">
+                                    <Plus className="w-6 h-6" />
+                                </div>
+                            </button>
+                        </div>
+                    )}
                 </div>
+
+                {/* Decorative background blobs */}
+                <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
+                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl -z-10 animate-pulse-slow delay-1000"></div>
             </div>
 
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex gap-8">
-                    {/* Posts Feed */}
-                    <div className="flex-1">
-                        {(() => {
-                            const displayedPosts = posts;
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Posts Feed */}
+                <div className="space-y-8">
+                    {(() => {
+                        const displayedPosts = posts;
 
-                            if (loading) return (
-                                <div className="space-y-6">
-                                    {[1, 2, 3].map((i) => (
-                                        <div key={i} className="card p-6 animate-pulse">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <div className="w-12 h-12 bg-[var(--light-gray)] rounded-full" />
-                                                <div>
-                                                    <div className="h-4 bg-[var(--light-gray)] rounded w-32 mb-2" />
-                                                    <div className="h-3 bg-[var(--light-gray)] rounded w-20" />
-                                                </div>
+                        if (loading) return (
+                            <div className="space-y-6">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="bg-white/50 backdrop-blur-sm rounded-3xl p-6 border border-white/20 animate-pulse">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-12 h-12 bg-gray-100 rounded-full" />
+                                            <div>
+                                                <div className="h-4 bg-gray-100 rounded w-32 mb-2" />
+                                                <div className="h-3 bg-gray-100 rounded w-20" />
                                             </div>
-                                            <div className="h-4 bg-[var(--light-gray)] rounded w-3/4 mb-2" />
-                                            <div className="h-4 bg-[var(--light-gray)] rounded w-1/2" />
                                         </div>
-                                    ))}
-                                </div>
-                            );
+                                        <div className="h-4 bg-gray-100 rounded w-3/4 mb-3" />
+                                        <div className="h-4 bg-gray-100 rounded w-1/2" />
+                                    </div>
+                                ))}
+                            </div>
+                        );
 
-                            if (displayedPosts.length === 0) return (
-                                <div className="text-center py-16 card">
-                                    <div className="text-6xl mb-4">📝</div>
-                                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                                        No posts in community
-                                    </h3>
-                                    <p className="text-[var(--text-secondary)]">
-                                        Be the first to share
-                                    </p>
-                                </div>
-                            );
+                        if (displayedPosts.length === 0) return (
+                            <div className="text-center py-20 bg-white/40 backdrop-blur-sm rounded-3xl border border-dashed border-[var(--border)]">
+                                <div className="text-6xl mb-6 opacity-30">💭</div>
+                                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+                                    Quiet here...
+                                </h3>
+                                <p className="text-[var(--text-secondary)]">
+                                    Be the first to share your thoughts
+                                </p>
+                            </div>
+                        );
 
-                            return (
-                                <div className="space-y-6">
-                                    {displayedPosts.map((post) => (
-                                        <div key={post.id} className="card p-6">
-                                            {/* Author */}
-                                            <div className="flex items-center justify-between mb-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-12 h-12 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white">
-                                                        {post.is_anonymous ? (
-                                                            <EyeOff className="w-5 h-5" />
-                                                        ) : (
-                                                            <span className="text-lg font-semibold">
-                                                                {post.user?.name?.charAt(0) || 'A'}
+                        return (
+                            <div className="space-y-6">
+                                {displayedPosts.map((post, index) => (
+                                    <div
+                                        key={post.id}
+                                        className="bg-white/60 backdrop-blur-md rounded-[2rem] p-6 sm:p-8 border border-white/50 hover:shadow-lg transition-all duration-300 group"
+                                        style={{ animationDelay: `${index * 100}ms` }}
+                                    >
+                                        {/* Author */}
+                                        <div className="flex items-center justify-between mb-6">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white text-lg font-bold shadow-md transform group-hover:rotate-3 transition-transform ${post.is_anonymous ? 'bg-gradient-to-br from-indigo-300 to-indigo-500' : 'bg-gradient-to-br from-indigo-500 to-purple-600'}`}>
+                                                    {post.is_anonymous ? (
+                                                        <EyeOff className="w-5 h-5" />
+                                                    ) : (
+                                                        <span>{post.user?.name?.charAt(0) || 'A'}</span>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="font-bold text-[var(--text-primary)]">
+                                                            {post.is_anonymous ? 'Anonymous Friend' : post.user?.name || 'User'}
+                                                        </p>
+                                                        {post.is_anonymous && (
+                                                            <span className="text-[10px] px-2 py-1 rounded-full bg-indigo-50 text-indigo-500 font-medium tracking-wide">
+                                                                HIDDEN
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-2">
-                                                            <p className="font-semibold text-[var(--text-primary)]">
-                                                                {post.is_anonymous ? 'Anonymous' : post.user?.name || 'User'}
-                                                            </p>
-                                                            {post.is_anonymous && (
-                                                                <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--light-gray)] text-[var(--text-muted)]">
-                                                                    Anonymous
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <p className="text-sm text-[var(--text-muted)]">
-                                                            {new Date(post.created_at).toLocaleDateString()}
-                                                        </p>
-                                                    </div>
+                                                    <p className="text-sm text-[var(--text-muted)] mt-0.5">
+                                                        {new Date(post.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+                                                    </p>
                                                 </div>
-                                                {/* Edit/Delete buttons for own posts */}
-                                                {isOwnPost(post) && (
-                                                    <div className="flex items-center gap-1">
-                                                        <button
-                                                            onClick={() => openEditModal(post)}
-                                                            className="p-2 hover:bg-[var(--surface-hover)] rounded-full transition-colors text-[var(--text-muted)] hover:text-[var(--primary)]"
-                                                            title="Edit post"
-                                                        >
-                                                            <Edit2 className="w-4 h-4" />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => setDeletingPost(post)}
-                                                            className="p-2 hover:bg-red-50 rounded-full transition-colors text-[var(--text-muted)] hover:text-red-500"
-                                                            title="Delete post"
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </button>
+                                            </div>
+                                            {/* Edit/Delete buttons for own posts */}
+                                            {isOwnPost(post) && (
+                                                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        onClick={() => openEditModal(post)}
+                                                        className="p-2 hover:bg-indigo-50 rounded-xl transition-colors text-[var(--text-muted)] hover:text-indigo-600"
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setDeletingPost(post)}
+                                                        className="p-2 hover:bg-red-50 rounded-xl transition-colors text-[var(--text-muted)] hover:text-red-500"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="mb-6 pl-2">
+                                            <h3 className="font-bold text-xl text-[var(--text-primary)] mb-3 leading-snug">{post.title}</h3>
+                                            <p className="text-[var(--text-secondary)] leading-relaxed whitespace-pre-line text-lg opacity-90">{post.content}</p>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="flex items-center gap-6 pt-6 border-t border-[var(--border-light)]">
+                                            <button
+                                                onClick={() => handleLike(post.id)}
+                                                className={`flex items-center gap-2 transition-all px-4 py-2 rounded-xl group/like ${post.likes_count > 0 ? 'bg-red-50 text-red-500' : 'hover:bg-red-50 hover:text-red-500 text-[var(--text-muted)]'
+                                                    }`}
+                                            >
+                                                <Heart className={`w-5 h-5 transition-transform group-active/like:scale-75 ${post.likes_count > 0 ? 'fill-current' : ''}`} />
+                                                <span className="font-medium">{post.likes_count || 0}</span>
+                                            </button>
+                                            <button
+                                                onClick={() => handleToggleComments(post.id)}
+                                                className={`flex items-center gap-2 transition-all px-4 py-2 rounded-xl ${expandedPost === post.id ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-indigo-50 hover:text-indigo-600 text-[var(--text-muted)]'
+                                                    }`}
+                                            >
+                                                <MessageCircle className="w-5 h-5" />
+                                                <span className="font-medium">{post.comments_count || 0}</span>
+                                                <span className="ml-1 text-sm opacity-70">Comments</span>
+                                            </button>
+                                        </div>
+
+                                        {/* Comments Section */}
+                                        {expandedPost === post.id && (
+                                            <div className="mt-6 pt-6 border-t border-[var(--border-light)] bg-white/30 rounded-2xl mx-[-12px] p-6 animate-fade-in-down">
+                                                {/* Comment Input */}
+                                                {isAuthenticated ? (
+                                                    <div className="flex gap-4 mb-8">
+                                                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm flex-shrink-0">
+                                                            {user?.name?.charAt(0) || 'U'}
+                                                        </div>
+                                                        <div className="flex-1 relative">
+                                                            <input
+                                                                type="text"
+                                                                value={newComment}
+                                                                onChange={(e) => setNewComment(e.target.value)}
+                                                                onKeyPress={(e) => e.key === 'Enter' && handleSubmitComment(post.id)}
+                                                                placeholder={t('community.writeComment') || 'Write a supportive comment...'}
+                                                                className="w-full px-6 py-3 bg-white rounded-2xl text-sm border-none shadow-sm focus:ring-2 focus:ring-indigo-200 transition-all pr-12"
+                                                            />
+                                                            <button
+                                                                onClick={() => handleSubmitComment(post.id)}
+                                                                disabled={!newComment.trim() || submittingComment}
+                                                                className="absolute right-2 top-2 p-1.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:bg-gray-300"
+                                                            >
+                                                                <Send className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="mb-6 p-4 bg-indigo-50/50 rounded-2xl text-center border border-indigo-100">
+                                                        <Link to="/login" className="text-indigo-600 font-medium hover:underline">
+                                                            {t('community.loginToComment') || 'Sign in to join the conversation'}
+                                                        </Link>
                                                     </div>
                                                 )}
-                                            </div>
 
-                                            {/* Content */}
-                                            <h3 className="font-semibold text-lg text-[var(--text-primary)] mb-2">{post.title}</h3>
-                                            <p className="text-[var(--text-secondary)] mb-4">{post.content}</p>
-
-                                            {/* Actions */}
-                                            <div className="flex items-center gap-6 pt-4 border-t border-[var(--border)]">
-                                                <button
-                                                    onClick={() => handleLike(post.id)}
-                                                    className="flex items-center gap-2 text-[var(--text-muted)] hover:text-red-500 transition-colors"
-                                                >
-                                                    <Heart className={`w-5 h-5 ${post.likes_count > 0 ? 'fill-red-500 text-red-500' : ''}`} />
-                                                    <span className="text-sm">{post.likes_count || 0}</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => handleToggleComments(post.id)}
-                                                    className={`flex items-center gap-2 transition-colors ${expandedPost === post.id ? 'text-[var(--primary)]' : 'text-[var(--text-muted)] hover:text-[var(--primary)]'}`}
-                                                >
-                                                    <MessageCircle className="w-5 h-5" />
-                                                    <span className="text-sm">{post.comments_count || 0}</span>
-                                                    {expandedPost === post.id ? (
-                                                        <ChevronUp className="w-4 h-4" />
-                                                    ) : (
-                                                        <ChevronDown className="w-4 h-4" />
-                                                    )}
-                                                </button>
-                                            </div>
-
-                                            {/* Comments Section */}
-                                            {expandedPost === post.id && (
-                                                <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                                                    {/* Comment Input */}
-                                                    {isAuthenticated ? (
-                                                        <div className="flex gap-3 mb-4">
-                                                            <div className="w-8 h-8 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0">
-                                                                {user?.name?.charAt(0) || 'U'}
-                                                            </div>
-                                                            <div className="flex-1 flex gap-2">
-                                                                <input
-                                                                    type="text"
-                                                                    value={newComment}
-                                                                    onChange={(e) => setNewComment(e.target.value)}
-                                                                    onKeyPress={(e) => e.key === 'Enter' && handleSubmitComment(post.id)}
-                                                                    placeholder={t('community.writeComment') || 'Write a comment...'}
-                                                                    className="flex-1 px-4 py-2 input-field rounded-full text-sm"
-                                                                />
-                                                                <button
-                                                                    onClick={() => handleSubmitComment(post.id)}
-                                                                    disabled={!newComment.trim() || submittingComment}
-                                                                    className="p-2 bg-[var(--primary)] text-white rounded-full hover:bg-[var(--primary-dark)] transition-colors disabled:opacity-50"
-                                                                >
-                                                                    <Send className="w-4 h-4" />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="mb-4 p-3 bg-[var(--surface-hover)] rounded-lg text-center">
-                                                            <Link to="/login" className="text-[var(--primary)] hover:underline text-sm">
-                                                                {t('community.loginToComment') || 'Log in to comment'}
-                                                            </Link>
-                                                        </div>
-                                                    )}
-
-                                                    {/* Comments List */}
-                                                    {commentLoading ? (
-                                                        <div className="space-y-3">
-                                                            {[1, 2].map((i) => (
-                                                                <div key={i} className="flex gap-3 animate-pulse">
-                                                                    <div className="w-8 h-8 bg-[var(--light-gray)] rounded-full" />
-                                                                    <div className="flex-1">
-                                                                        <div className="h-3 bg-[var(--light-gray)] rounded w-24 mb-2" />
-                                                                        <div className="h-3 bg-[var(--light-gray)] rounded w-3/4" />
-                                                                    </div>
+                                                {/* Comments List */}
+                                                {commentLoading ? (
+                                                    <div className="space-y-4">
+                                                        {[1, 2].map((i) => (
+                                                            <div key={i} className="flex gap-4 animate-pulse">
+                                                                <div className="w-8 h-8 bg-gray-200 rounded-full" />
+                                                                <div className="flex-1">
+                                                                    <div className="h-3 bg-gray-200 rounded w-24 mb-2" />
+                                                                    <div className="h-3 bg-gray-200 rounded w-full" />
                                                                 </div>
-                                                            ))}
-                                                        </div>
-                                                    ) : comments[post.id]?.length > 0 ? (
-                                                        <div className="space-y-4">
-                                                            {comments[post.id].map((comment) => (
-                                                                <div key={comment.id} className="flex gap-3">
-                                                                    <div className="w-8 h-8 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dark)] rounded-full flex items-center justify-center text-white text-xs flex-shrink-0">
-                                                                        {comment.is_anonymous ? (
-                                                                            <EyeOff className="w-3 h-3" />
-                                                                        ) : (
-                                                                            comment.user?.name?.charAt(0) || 'A'
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="flex-1 min-w-0">
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : comments[post.id]?.length > 0 ? (
+                                                    <div className="space-y-6">
+                                                        {comments[post.id].map((comment) => (
+                                                            <div key={comment.id} className="flex gap-4 group/comment">
+                                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-1 ${comment.is_anonymous ? 'bg-indigo-300' : 'bg-indigo-500'}`}>
+                                                                    {comment.is_anonymous ? (
+                                                                        <EyeOff className="w-3 h-3" />
+                                                                    ) : (
+                                                                        comment.user?.name?.charAt(0) || 'A'
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex-1">
+                                                                    <div className="bg-white/60 p-4 rounded-2xl rounded-tl-none inline-block max-w-[90%]">
                                                                         <div className="flex items-center gap-2 mb-1">
-                                                                            <span className="text-sm font-medium text-[var(--text-primary)]">
+                                                                            <span className="text-sm font-bold text-[var(--text-primary)]">
                                                                                 {comment.is_anonymous ? 'Anonymous' : comment.user?.name || 'User'}
                                                                             </span>
                                                                             <span className="text-xs text-[var(--text-muted)]">
                                                                                 {new Date(comment.created_at).toLocaleDateString()}
                                                                             </span>
                                                                         </div>
-                                                                        <p className="text-sm text-[var(--text-secondary)]">{comment.content}</p>
+                                                                        <p className="text-[var(--text-secondary)] text-sm">{comment.content}</p>
                                                                     </div>
                                                                 </div>
-                                                            ))}
-                                                        </div>
-                                                    ) : (
-                                                        <p className="text-sm text-[var(--text-muted)] text-center py-4">
-                                                            {t('community.noComments') || 'No comments yet. Be the first to comment!'}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            );
-                        })()}
-                    </div>
-
-
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <div className="text-center py-8 opacity-50">
+                                                        <MessageSquare className="w-8 h-8 mx-auto mb-2 text-indigo-300" />
+                                                        <p className="text-sm">No comments yet.</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        );
+                    })()}
                 </div>
             </div>
 
-            {/* Create Post Modal */}
+            {/* Create Post Modal - Journaling Style */}
             {showCreateModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="card p-6 sm:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-bold text-[var(--text-primary)]">{t('community.createPost')}</h2>
-                            <button onClick={() => setShowCreateModal(false)} className="p-2 hover:bg-[var(--surface-hover)] rounded-full">
-                                <X className="w-6 h-6 text-[var(--text-muted)]" />
-                            </button>
+                <div className="fixed inset-0 bg-[var(--background)]/80 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+                    <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/50 animate-scale-in">
+                        <div className="p-8 sm:p-10">
+                            <div className="flex justify-between items-center mb-8">
+                                <h2 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
+                                    <PenTool className="w-8 h-8 text-indigo-500" />
+                                    New Entry
+                                </h2>
+                                <button onClick={() => setShowCreateModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                    <X className="w-6 h-6 text-gray-400" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Give your thought a title..."
+                                        value={newPost.title}
+                                        onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+                                        className="w-full p-4 bg-gray-50 border-none rounded-2xl text-xl font-semibold placeholder-gray-300 focus:ring-0 focus:bg-white transition-all"
+                                    />
+                                </div>
+
+                                <div className="relative">
+                                    <textarea
+                                        placeholder="What's on your mind today? This is a safe space..."
+                                        value={newPost.content}
+                                        onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+                                        className="w-full p-6 bg-gray-50 border-none rounded-2xl h-64 resize-none text-[var(--text-secondary)] placeholder-gray-400 focus:ring-0 focus:bg-white transition-all text-lg leading-relaxed custom-scrollbar"
+                                    />
+                                </div>
+
+                                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-100">
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <div className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${newPost.is_anonymous ? 'bg-indigo-600' : 'bg-gray-200'}`}>
+                                            <div className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-md transition-transform duration-300 ${newPost.is_anonymous ? 'translate-x-7' : 'translate-x-1'}`} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-semibold text-[var(--text-primary)]">Post Anonymously</span>
+                                            <span className="text-xs text-[var(--text-muted)]">Hide your identity</span>
+                                        </div>
+                                        <input
+                                            type="checkbox"
+                                            checked={newPost.is_anonymous}
+                                            onChange={(e) => setNewPost({ ...newPost, is_anonymous: e.target.checked })}
+                                            className="sr-only"
+                                        />
+                                    </label>
+
+                                    <button
+                                        onClick={handleCreatePost}
+                                        disabled={!newPost.title || !newPost.content || creating}
+                                        className="flex items-center gap-2 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-indigo-200 transform hover:-translate-y-0.5"
+                                    >
+                                        <Send className="w-5 h-5" />
+                                        {creating ? 'Publishing...' : 'Share with Community'}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-
-                        <input
-                            type="text"
-                            placeholder={t('community.postTitle')}
-                            value={newPost.title}
-                            onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                            className="w-full p-4 input-field rounded-xl mb-4"
-                        />
-
-                        <textarea
-                            placeholder={t('community.postContent')}
-                            value={newPost.content}
-                            onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-                            className="w-full p-4 input-field rounded-xl resize-none h-32 mb-4"
-                        />
-
-                        {/* Anonymous Toggle */}
-                        <label className="flex items-center gap-3 mb-6 cursor-pointer p-4 rounded-xl bg-[var(--surface-hover)] hover:bg-[var(--light-gray)] transition-colors">
-                            <div className={`relative w-12 h-7 rounded-full transition-colors ${newPost.is_anonymous ? 'bg-[var(--primary)]' : 'bg-[var(--border)]'}`}>
-                                <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${newPost.is_anonymous ? 'translate-x-6' : 'translate-x-1'}`} />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                {newPost.is_anonymous ? <EyeOff className="w-5 h-5 text-[var(--primary)]" /> : <Eye className="w-5 h-5 text-[var(--text-muted)]" />}
-                                <span className="text-[var(--text-primary)] font-medium">{t('community.postAnonymously')}</span>
-                            </div>
-                            <input
-                                type="checkbox"
-                                checked={newPost.is_anonymous}
-                                onChange={(e) => setNewPost({ ...newPost, is_anonymous: e.target.checked })}
-                                className="sr-only"
-                            />
-                        </label>
-
-                        <button
-                            onClick={handleCreatePost}
-                            disabled={!newPost.title || !newPost.content || creating}
-                            className="w-full btn-primary flex items-center justify-center gap-2 disabled:opacity-50"
-                        >
-                            <Send className="w-5 h-5" />
-                            {creating ? t('community.posting') : t('community.post')}
-                        </button>
                     </div>
                 </div>
             )}
@@ -467,16 +494,16 @@ export default function Community() {
                     onClick={() => setEditingPost(null)}
                 >
                     <div
-                        className="bg-[var(--surface)] rounded-2xl max-w-lg w-full shadow-2xl"
+                        className="bg-white rounded-[2rem] max-w-lg w-full shadow-2xl overflow-hidden"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
-                            <h3 className="font-semibold text-[var(--text-primary)]">Edit Post</h3>
+                        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+                            <h3 className="font-bold text-xl text-[var(--text-primary)]">Edit Post</h3>
                             <button
                                 onClick={() => setEditingPost(null)}
-                                className="p-2 hover:bg-[var(--surface-hover)] rounded-full"
+                                className="p-2 hover:bg-gray-100 rounded-full"
                             >
-                                <X className="w-5 h-5 text-[var(--text-secondary)]" />
+                                <X className="w-5 h-5 text-gray-400" />
                             </button>
                         </div>
                         <div className="p-6 space-y-4">
@@ -485,26 +512,26 @@ export default function Community() {
                                 value={editForm.title}
                                 onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
                                 placeholder="Post title"
-                                className="w-full p-4 input-field rounded-xl"
+                                className="w-full p-4 bg-gray-50 border-none rounded-xl font-semibold focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all"
                             />
                             <textarea
                                 value={editForm.content}
                                 onChange={(e) => setEditForm({ ...editForm, content: e.target.value })}
                                 placeholder="What's on your mind?"
                                 rows={5}
-                                className="w-full p-4 input-field rounded-xl resize-none"
+                                className="w-full p-4 bg-gray-50 border-none rounded-xl resize-none focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all"
                             />
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 pt-2">
                                 <button
                                     onClick={() => setEditingPost(null)}
-                                    className="flex-1 py-3 px-4 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
+                                    className="flex-1 py-3 px-4 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleEditPost}
                                     disabled={!editForm.title || !editForm.content || saving}
-                                    className="flex-1 btn-primary disabled:opacity-50"
+                                    className="flex-1 py-3 px-4 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
                                 >
                                     {saving ? 'Saving...' : 'Save Changes'}
                                 </button>
@@ -521,32 +548,30 @@ export default function Community() {
                     onClick={() => setDeletingPost(null)}
                 >
                     <div
-                        className="bg-[var(--surface)] rounded-2xl max-w-sm w-full shadow-2xl"
+                        className="bg-white rounded-[2rem] max-w-sm w-full shadow-2xl p-6 text-center"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="p-6 text-center">
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Trash2 className="w-8 h-8 text-red-500" />
-                            </div>
-                            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Delete Post?</h3>
-                            <p className="text-[var(--text-secondary)] mb-6">
-                                This action cannot be undone. Are you sure you want to delete this post?
-                            </p>
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setDeletingPost(null)}
-                                    className="flex-1 py-3 px-4 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleDeletePost}
-                                    disabled={saving}
-                                    className="flex-1 py-3 px-4 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
-                                >
-                                    {saving ? 'Deleting...' : 'Delete'}
-                                </button>
-                            </div>
+                        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Trash2 className="w-8 h-8 text-red-500" />
+                        </div>
+                        <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">Delete Post?</h3>
+                        <p className="text-[var(--text-secondary)] mb-8">
+                            This action cannot be undone. Are you sure you want to delete this post?
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setDeletingPost(null)}
+                                className="flex-1 py-3 px-4 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeletePost}
+                                disabled={saving}
+                                className="flex-1 py-3 px-4 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
+                            >
+                                {saving ? 'Deleting...' : 'Delete'}
+                            </button>
                         </div>
                     </div>
                 </div>
