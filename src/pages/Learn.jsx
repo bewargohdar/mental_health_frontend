@@ -277,7 +277,7 @@ export default function Learn() {
                                     {featuredVideo.description || "Watch this helpful video guide to learn more about key concepts and strategies."}
                                 </p>
                                 <div className="flex items-center gap-4 text-xs text-[var(--text-muted)] mt-auto">
-                                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {featuredVideo.duration}</span>
+                                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {formatDuration(featuredVideo.duration)}</span>
                                 </div>
                             </div>
                         </div>
@@ -285,6 +285,19 @@ export default function Learn() {
                 )}
             </div>
         );
+    };
+
+    const formatDuration = (seconds) => {
+        if (!seconds) return '0:00';
+        // Check if it's already formatted (contains :)
+        if (typeof seconds === 'string' && seconds.includes(':')) return seconds;
+
+        const num = parseInt(seconds, 10);
+        if (isNaN(num)) return '0:00';
+
+        const minutes = Math.floor(num / 60);
+        const remainingSeconds = num % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
 
     const renderVideos = () => {
@@ -339,7 +352,7 @@ export default function Learn() {
                                 </div>
                             </div>
                             <span className="absolute bottom-2 end-2 px-2 py-0.5 bg-black/70 text-white text-[10px] font-bold rounded">
-                                {video.duration}
+                                {formatDuration(video.duration)}
                             </span>
                         </div>
                         <div className="p-4">
