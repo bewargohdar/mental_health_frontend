@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { Calendar, Plus, TrendingUp, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Plus, TrendingUp, Clock, ChevronLeft, ChevronRight, Sparkles, Smile, Frown, Meh, Activity, X } from 'lucide-react';
 import api from '../api/axios';
 
 const moodEmojis = [
-    { type: 'happy', emoji: '😊', label: 'happy', color: 'from-green-400 to-emerald-500' },
-    { type: 'calm', emoji: '😌', label: 'calm', color: 'from-blue-400 to-cyan-500' },
-    { type: 'hopeful', emoji: '🌟', label: 'hopeful', color: 'from-yellow-400 to-amber-500' },
-    { type: 'sad', emoji: '😢', label: 'sad', color: 'from-indigo-400 to-blue-500' },
-    { type: 'anxious', emoji: '😰', label: 'anxious', color: 'from-orange-400 to-red-500' },
-    { type: 'angry', emoji: '😠', label: 'angry', color: 'from-red-400 to-rose-500' },
+    { type: 'happy', emoji: '😊', label: 'happy', color: 'bg-green-100 text-green-600 border-green-200' },
+    { type: 'calm', emoji: '😌', label: 'calm', color: 'bg-blue-100 text-blue-600 border-blue-200' },
+    { type: 'hopeful', emoji: '🌟', label: 'hopeful', color: 'bg-yellow-100 text-yellow-600 border-yellow-200' },
+    { type: 'sad', emoji: '😢', label: 'sad', color: 'bg-indigo-100 text-indigo-600 border-indigo-200' },
+    { type: 'anxious', emoji: '😰', label: 'anxious', color: 'bg-orange-100 text-orange-600 border-orange-200' },
+    { type: 'angry', emoji: '😠', label: 'angry', color: 'bg-red-100 text-red-600 border-red-200' },
 ];
 
 export default function TrackMood() {
@@ -36,7 +36,6 @@ export default function TrackMood() {
     const fetchMoodHistory = async () => {
         try {
             const res = await api.get('/moods');
-            // Handle pagination: res.data.data is the pagination object, .data is the array
             setMoodHistory(res.data.data?.data || res.data.data || []);
         } catch (error) {
             console.error('Failed to fetch mood history:', error);
@@ -69,17 +68,19 @@ export default function TrackMood() {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen flex items-center justify-center px-4">
-                <div className="card p-8 sm:p-12 text-center max-w-md w-full">
-                    <div className="text-6xl mb-6">🌿</div>
-                    <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+            <div className="min-h-screen flex items-center justify-center px-4 bg-[var(--background)]">
+                <div className="text-center max-w-md w-full animate-fade-in-up">
+                    <div className="w-24 h-24 bg-[var(--surface)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <span className="text-5xl">🌿</span>
+                    </div>
+                    <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
                         {t('trackMood.title')}
                     </h2>
-                    <p className="text-[var(--text-secondary)] mb-8">
+                    <p className="text-[var(--text-secondary)] mb-8 text-lg leading-relaxed">
                         Sign in to start tracking your emotional journey and gain insights into your mental wellness.
                     </p>
-                    <Link to="/login" className="btn-primary inline-block">
-                        {t('nav.signIn')}
+                    <Link to="/login" className="btn-primary inline-flex items-center gap-2 px-8 py-3 text-lg">
+                        {t('nav.signIn')} <ChevronRight className="w-5 h-5" />
                     </Link>
                 </div>
             </div>
@@ -87,194 +88,247 @@ export default function TrackMood() {
     }
 
     return (
-        <div className="min-h-screen pb-12">
+        <div className="min-h-screen pb-12 bg-[var(--background)]">
             {/* Header */}
-            <div className="bg-gradient-to-br from-[var(--secondary)] to-[var(--secondary-dark)] text-white py-12">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h1 className="text-3xl font-bold mb-2">{t('trackMood.title')}</h1>
-                    <p className="opacity-90">{t('trackMood.subtitle')}</p>
+            <div className="bg-[var(--surface)] border-b border-[var(--border)] pt-24 pb-12 mb-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2 flex items-center gap-2">
+                                <Sparkles className="w-6 h-6 text-[var(--primary)]" />
+                                {t('trackMood.title')}
+                            </h1>
+                            <p className="text-[var(--text-secondary)] text-lg">{t('trackMood.subtitle')}</p>
+                        </div>
+                        <div className="hidden md:block">
+                            <Link to="/dashboard" className="btn-secondary text-sm">
+                                View Dashboard
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
-                {/* Mood Selection Card */}
-                <div className="card p-6 sm:p-8 mb-8">
-                    {submitted ? (
-                        <div className="text-center py-8">
-                            <div className="text-6xl mb-4">✨</div>
-                            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                                Mood Saved!
-                            </h3>
-                            <p className="text-[var(--text-secondary)]">
-                                Great job tracking your emotions today.
-                            </p>
-                        </div>
-                    ) : (
-                        <>
-                            {/* Mood Selection */}
-                            <div className="mb-8">
-                                <h3 className="font-semibold text-[var(--text-primary)] mb-4 text-center">
-                                    {t('trackMood.selectMood')}
-                                </h3>
-                                <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4">
-                                    {moodEmojis.map((mood) => (
-                                        <button
-                                            key={mood.type}
-                                            onClick={() => setSelectedMood(mood)}
-                                            className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${selectedMood?.type === mood.type
-                                                ? 'border-[var(--primary)] bg-[var(--primary)]/10 scale-105'
-                                                : 'border-[var(--border)] hover:border-[var(--primary)]/50 hover:bg-[var(--surface-hover)]'
-                                                }`}
-                                        >
-                                            <span className={`text-4xl sm:text-5xl mood-emoji ${selectedMood?.type === mood.type ? 'selected' : ''}`}>
-                                                {mood.emoji}
-                                            </span>
-                                            <span className={`text-xs font-medium ${selectedMood?.type === mood.type
-                                                ? 'text-[var(--primary)]'
-                                                : 'text-[var(--text-secondary)]'
-                                                }`}>
-                                                {t(`trackMood.moods.${mood.label}`)}
-                                            </span>
-                                        </button>
-                                    ))}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid lg:grid-cols-12 gap-8">
+                    {/* Left Column: Input Area */}
+                    <div className="lg:col-span-7">
+                        <div className="bg-[var(--surface)] rounded-3xl p-6 sm:p-8 border border-[var(--border)] shadow-sm sticky top-24">
+                            {submitted ? (
+                                <div className="text-center py-16 animate-fade-in-up">
+                                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <Sparkles className="w-10 h-10 text-green-600" />
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Mood Saved!</h3>
+                                    <p className="text-[var(--text-secondary)] mb-6">Great job being mindful of your emotions.</p>
+                                    <button
+                                        onClick={() => setSubmitted(false)}
+                                        className="btn-secondary"
+                                    >
+                                        Track Another
+                                    </button>
                                 </div>
-                            </div>
+                            ) : (
+                                <>
+                                    <h2 className="text-xl font-bold text-[var(--text-primary)] mb-6">
+                                        {t('trackMood.createEntry', 'New Entry')}
+                                    </h2>
 
-                            {/* Intensity Scale */}
-                            {selectedMood && (
-                                <div className="mb-8 animate-fadeIn">
-                                    <h3 className="font-semibold text-[var(--text-primary)] mb-4 text-center">
-                                        {t('trackMood.moodScale')}
-                                    </h3>
-                                    <div className="max-w-sm mx-auto">
-                                        <div className="flex justify-between gap-2 mb-3">
-                                            {[1, 2, 3, 4, 5].map((level) => (
+                                    {/* Mood Selection */}
+                                    <div className="mb-8">
+                                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                                            {t('trackMood.selectMood')}
+                                        </label>
+                                        <div className="grid grid-cols-3 gap-4">
+                                            {moodEmojis.map((mood) => (
                                                 <button
-                                                    key={level}
-                                                    onClick={() => setMoodIntensity(level)}
-                                                    className={`flex-1 py-4 rounded-xl font-bold text-lg transition-all ${moodIntensity === level
-                                                        ? `bg-gradient-to-br ${selectedMood.color} text-white scale-110 shadow-lg`
-                                                        : 'bg-[var(--light-gray)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
+                                                    key={mood.type}
+                                                    onClick={() => setSelectedMood(mood)}
+                                                    className={`relative p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-2 group ${selectedMood?.type === mood.type
+                                                            ? `${mood.color} border-current ring-2 ring-offset-2 ring-blue-100`
+                                                            : 'border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--surface-hover)]'
                                                         }`}
                                                 >
-                                                    {level}
+                                                    <span className={`text-4xl transition-transform duration-300 ${selectedMood?.type === mood.type ? 'scale-125' : 'group-hover:scale-110'}`}>
+                                                        {mood.emoji}
+                                                    </span>
+                                                    <span className="text-sm font-medium capitalize">{t(`trackMood.moods.${mood.label}`)}</span>
+                                                    {selectedMood?.type === mood.type && (
+                                                        <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-current animate-pulse"></div>
+                                                    )}
                                                 </button>
                                             ))}
                                         </div>
-                                        <div className="flex justify-between text-xs text-[var(--text-muted)]">
-                                            <span>Mild</span>
-                                            <span>Intense</span>
-                                        </div>
                                     </div>
-                                </div>
-                            )}
 
-                            {/* Note */}
-                            {selectedMood && (
-                                <div className="mb-8 animate-fadeIn">
-                                    <h3 className="font-semibold text-[var(--text-primary)] mb-4">
-                                        {t('trackMood.note')}
-                                    </h3>
-                                    <textarea
-                                        value={note}
-                                        onChange={(e) => setNote(e.target.value)}
-                                        placeholder={t('trackMood.notePlaceholder')}
-                                        className="w-full p-4 input-field rounded-xl resize-none h-32"
-                                    />
-                                </div>
-                            )}
+                                    {/* Intensity & Notes - Only show when mood is selected */}
+                                    {selectedMood && (
+                                        <div className="animate-fade-in-up">
+                                            {/* Intensity Slider */}
+                                            <div className="mb-8">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <label className="text-sm font-medium text-[var(--text-secondary)]">
+                                                        {t('trackMood.moodScale')}
+                                                    </label>
+                                                    <span className="px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-sm font-bold">
+                                                        Level {moodIntensity}
+                                                    </span>
+                                                </div>
+                                                <input
+                                                    type="range"
+                                                    min="1"
+                                                    max="5"
+                                                    value={moodIntensity}
+                                                    onChange={(e) => setMoodIntensity(parseInt(e.target.value))}
+                                                    className="w-full h-2 bg-[var(--light-gray)] rounded-lg appearance-none cursor-pointer accent-[var(--primary)]"
+                                                />
+                                                <div className="flex justify-between text-xs text-[var(--text-muted)] mt-2 font-medium uppercase tracking-wide">
+                                                    <span>Mild</span>
+                                                    <span>Moderate</span>
+                                                    <span>Intense</span>
+                                                </div>
+                                            </div>
 
-                            {/* Submit Button */}
-                            {selectedMood && (
-                                <button
-                                    onClick={handleSubmit}
-                                    disabled={submitting}
-                                    className="w-full btn-primary flex items-center justify-center gap-2 disabled:opacity-50 animate-fadeIn"
-                                >
-                                    <Plus className="w-5 h-5" />
-                                    {submitting ? t('common.loading') : t('trackMood.submit')}
-                                </button>
-                            )}
-                        </>
-                    )}
-                </div>
+                                            {/* Note Input */}
+                                            <div className="mb-8">
+                                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                                                    {t('trackMood.note')} <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
+                                                </label>
+                                                <textarea
+                                                    value={note}
+                                                    onChange={(e) => setNote(e.target.value)}
+                                                    placeholder={t('trackMood.notePlaceholder')}
+                                                    className="w-full p-4 bg-[var(--background)] border border-[var(--border)] rounded-xl focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent outline-none transition-all resize-none h-32"
+                                                />
+                                            </div>
 
-                {/* Mood History */}
-                <div className="card p-6 sm:p-8">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-semibold text-[var(--text-primary)] flex items-center gap-2">
-                            <Calendar className="w-5 h-5 text-[var(--primary)]" />
-                            {t('trackMood.history')}
-                        </h3>
+                                            {/* Submit */}
+                                            <button
+                                                onClick={handleSubmit}
+                                                disabled={submitting}
+                                                className="w-full btn-primary py-4 text-lg rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md hover:shadow-lg"
+                                            >
+                                                {submitting ? (
+                                                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                ) : (
+                                                    <>
+                                                        <span>{t('trackMood.submit')}</span>
+                                                        <Plus className="w-5 h-5" />
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </div>
                     </div>
 
-                    {loading ? (
-                        <div className="space-y-4">
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="flex items-center gap-4 p-4 bg-[var(--light-gray)] rounded-xl animate-pulse">
-                                    <div className="w-12 h-12 bg-[var(--border)] rounded-full" />
-                                    <div className="flex-1">
-                                        <div className="h-4 bg-[var(--border)] rounded w-24 mb-2" />
-                                        <div className="h-3 bg-[var(--border)] rounded w-32" />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : moodHistory.length > 0 ? (
-                        <div className="space-y-3">
-                            {moodHistory.slice(0, 7).map((entry) => {
-                                const mood = moodEmojis.find(m => m.type === entry.mood_type) || moodEmojis[0];
-                                return (
-                                    <div
-                                        key={entry.id}
-                                        className="flex items-center gap-4 p-4 rounded-xl bg-[var(--surface-hover)] hover:bg-[var(--light-gray)] transition-colors"
-                                    >
-                                        <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${mood.color} flex items-center justify-center text-2xl`}>
-                                            {mood.emoji}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 flex-wrap">
-                                                <span className="font-medium text-[var(--text-primary)] capitalize">
-                                                    {entry.mood_type}
-                                                </span>
-                                                <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)]">
-                                                    Level {entry.intensity}
-                                                </span>
+                    {/* Right Column: History & Stats */}
+                    <div className="lg:col-span-5 space-y-8">
+                        {/* Interactive Stats Card - Placeholder or Simple Visual */}
+                        <div className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-8 opacity-10">
+                                <TrendingUp size={120} />
+                            </div>
+                            <div className="relative z-10">
+                                <h3 className="text-xl font-bold mb-1">Your Weekly Pulse</h3>
+                                <p className="text-blue-100 text-sm mb-6">Keep tracking to see patterns.</p>
+                                <div className="flex items-end gap-2 h-24 mt-4">
+                                    {/* Simple visual representation of last 7 entries (or fewer) */}
+                                    {moodHistory.slice(0, 7).reverse().map((entry, i) => {
+                                        const mood = moodEmojis.find(m => m.type === entry.mood_type);
+                                        const height = (entry.intensity / 5) * 100;
+                                        return (
+                                            <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
+                                                <div
+                                                    className="w-full bg-white/20 rounded-t-md transition-all hover:bg-white/40"
+                                                    style={{ height: `${height}%` }}
+                                                ></div>
+                                                <span className="text-[10px] opacity-60">{new Date(entry.created_at).getDate()}</span>
                                             </div>
-                                            {entry.notes && (
-                                                <p className="text-sm text-[var(--text-secondary)] truncate mt-1">
-                                                    {entry.notes}
-                                                </p>
-                                            )}
-                                        </div>
-                                        <div className="text-xs text-[var(--text-muted)] flex items-center gap-1">
-                                            <Clock className="w-3 h-3" />
-                                            {new Date(entry.created_at).toLocaleDateString()}
-                                        </div>
+                                        )
+                                    })}
+                                    {moodHistory.length === 0 && (
+                                        <div className="w-full text-center text-sm opacity-60 self-center">No data yet</div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Recent History List */}
+                        <div className="bg-[var(--surface)] rounded-3xl border border-[var(--border)] overflow-hidden">
+                            <div className="p-6 border-b border-[var(--border)] flex items-center justify-between">
+                                <h3 className="font-bold text-[var(--text-primary)] flex items-center gap-2">
+                                    <Clock className="w-5 h-5 text-[var(--text-muted)]" />
+                                    {t('trackMood.history')}
+                                </h3>
+                            </div>
+
+                            <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
+                                {loading ? (
+                                    <div className="p-6 space-y-4">
+                                        {[1, 2, 3].map((i) => (
+                                            <div key={i} className="h-16 bg-[var(--light-gray)] rounded-xl animate-pulse" />
+                                        ))}
                                     </div>
-                                );
-                            })}
+                                ) : moodHistory.length > 0 ? (
+                                    <div className="divide-y divide-[var(--border-light)]">
+                                        {moodHistory.map((entry) => {
+                                            const mood = moodEmojis.find(m => m.type === entry.mood_type) || moodEmojis[0];
+                                            return (
+                                                <div
+                                                    key={entry.id}
+                                                    className="p-4 hover:bg-[var(--surface-hover)] transition-colors group cursor-default"
+                                                >
+                                                    <div className="flex items-start gap-4">
+                                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${mood.color.replace('border-', 'border-2 ')}`}>
+                                                            {mood.emoji}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0 pt-0.5">
+                                                            <div className="flex items-center justify-between mb-1">
+                                                                <h4 className="font-semibold text-[var(--text-primary)] capitalize">
+                                                                    {entry.mood_type}
+                                                                </h4>
+                                                                <span className="text-xs text-[var(--text-muted)]">
+                                                                    {new Date(entry.created_at).toLocaleDateString()}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 mb-2">
+                                                                <div className="flex gap-0.5">
+                                                                    {[...Array(5)].map((_, i) => (
+                                                                        <div
+                                                                            key={i}
+                                                                            className={`w-1.5 h-1.5 rounded-full ${i < entry.intensity ? 'bg-[var(--primary)]' : 'bg-[var(--border)]'}`}
+                                                                        />
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                            {entry.notes && (
+                                                                <p className="text-sm text-[var(--text-secondary)] line-clamp-2 leading-relaxed bg-[var(--background)] p-3 rounded-lg">
+                                                                    "{entry.notes}"
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="p-12 text-center">
+                                        <div className="w-16 h-16 bg-[var(--light-gray)] rounded-full flex items-center justify-center mx-auto mb-4 text-2xl grayscale opacity-50">
+                                            📝
+                                        </div>
+                                        <p className="text-[var(--text-secondary)]">Your history is empty.</p>
+                                        <p className="text-sm text-[var(--text-muted)]">Start by logging your first mood!</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    ) : (
-                        <div className="text-center py-12">
-                            <div className="text-5xl mb-4">📝</div>
-                            <p className="text-[var(--text-secondary)]">
-                                No mood entries yet. Start tracking above!
-                            </p>
-                        </div>
-                    )}
+                    </div>
                 </div>
             </div>
-
-            <style>{`
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fadeIn {
-                    animation: fadeIn 0.3s ease-out;
-                }
-            `}</style>
         </div>
     );
 }
