@@ -14,10 +14,13 @@
         "welcome": "Welcome to Nafas",
         "tagline": "Your mental wellness journey starts here",
         "heroDescription": "Take the first step towards a healthier mind. Track your mood, learn coping strategies, and connect with a supportive community.",
+        "safeSpace": "A safe space for your wellness journey",
         "startJourney": "Start Your Journey",
         "learnMore": "Learn More",
         "dailyTip": "Daily Wellness Tip",
         "weeklyProgress": "Weekly Progress",
+        "moodCheck": "How are you feeling right now?",
+        "logFullMood": "Log your full mood entry",
         "features": {
             "trackMood": "Track Mood",
             "trackMoodDesc": "Monitor your emotional patterns",
@@ -27,7 +30,33 @@
             "communityDesc": "Connect with others",
             "doctors": "Find Help",
             "doctorsDesc": "Connect with professionals"
-        }
+        },
+        "featuresTitle": "Everything You Need",
+        "featuresSubtitle": "Comprehensive tools and resources to support your mental wellness journey",
+        "trust": {
+            "privacy": "Your Data is Private",
+            "privacyDesc": "End-to-end encryption",
+            "licensed": "Licensed Professionals",
+            "licensedDesc": "Verified credentials",
+            "safe": "Safe & Confidential",
+            "safeDesc": "No judgment, ever"
+        },
+        "trustTitle": "Your Trust Matters",
+        "trustSubtitle": "We prioritize your safety and privacy",
+        "crisisTitle": "24/7 Crisis Support",
+        "crisisDesc": "Call 988 anytime you need someone to talk to",
+        "storiesTitle": "Stories from Our Community",
+        "storiesSubtitle": "Real experiences from people like you",
+        "stats": {
+            "users": "Active Users",
+            "doctors": "Expert Doctors",
+            "resources": "Learning Resources",
+            "rating": "User Rating"
+        },
+        "ctaTitle": "Ready When You Are",
+        "ctaDesc": "There's no pressure here. Take your time, explore at your own pace, and know that support is always available when you need it.",
+        "ctaButton": "Get Started Free",
+        "ctaSecondary": "Explore Resources"
     },
     "learn": {
         "title": "Learning Center",

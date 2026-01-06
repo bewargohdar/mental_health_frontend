@@ -513,3 +513,575 @@ body {
   border-radius: 0.75rem;
   text-align: center;
 }
+
+/* ============================================
+   CALM UI STYLES - Mental Health Platform
+   ============================================ */
+
+/* Breathing Animation - Core calm effect */
+@keyframes breathe {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 0.8;
+  }
+}
+
+@keyframes breathe-ring {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 0.1;
+  }
+}
+
+@keyframes float-gentle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-soft {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(107, 159, 212, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 10px rgba(107, 159, 212, 0.1);
+  }
+}
+
+/* Breathing Circle Component */
+.breathing-circle {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.breathing-circle-inner {
+  position: absolute;
+  inset: 20%;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-light) 50%, var(--secondary-light) 100%);
+  border-radius: 50%;
+  animation: breathe 6s ease-in-out infinite;
+  filter: blur(1px);
+}
+
+.breathing-circle-middle {
+  position: absolute;
+  inset: 10%;
+  border: 2px solid var(--primary-light);
+  border-radius: 50%;
+  animation: breathe-ring 6s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+.breathing-circle-outer {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--accent-light);
+  border-radius: 50%;
+  animation: breathe-ring 6s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}
+
+.delay-400 {
+  animation-delay: 0.4s;
+}
+
+:root.dark .breathing-circle-inner {
+  background: linear-gradient(135deg, rgba(139, 184, 232, 0.3) 0%, rgba(212, 201, 224, 0.3) 50%, rgba(168, 212, 168, 0.3) 100%);
+}
+
+/* Mood Check-in Widget */
+.mood-check-widget {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.mood-check-widget:hover {
+  box-shadow: 0 8px 30px rgba(107, 159, 212, 0.12);
+}
+
+.mood-check-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.mood-check-emojis {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mood-check-emoji {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--light-gray);
+  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mood-check-emoji:hover {
+  transform: scale(1.15);
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.mood-check-emoji.selected {
+  background: var(--primary);
+  border-color: var(--primary-dark);
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(107, 159, 212, 0.4);
+}
+
+/* Trust Badge Styles */
+.trust-section {
+  background: linear-gradient(180deg, var(--surface) 0%, var(--background) 100%);
+  padding: 3rem 0;
+}
+
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.trust-badge:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 20px rgba(107, 159, 212, 0.15);
+}
+
+.trust-badge-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.trust-badge-content h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.125rem;
+}
+
+.trust-badge-content p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Crisis Helpline Banner */
+.crisis-banner {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #f59e0b;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.crisis-banner:hover {
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2);
+}
+
+:root.dark .crisis-banner {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.15) 0%, rgba(253, 230, 138, 0.15) 100%);
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+.crisis-banner-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #f59e0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.crisis-banner-text {
+  flex: 1;
+}
+
+.crisis-banner-text h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 0.125rem;
+}
+
+.crisis-banner-text p {
+  font-size: 0.8rem;
+  color: #b45309;
+}
+
+:root.dark .crisis-banner-text h4 {
+  color: #fbbf24;
+}
+
+:root.dark .crisis-banner-text p {
+  color: #fcd34d;
+}
+
+/* Testimonial Card */
+.testimonial-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+  box-shadow: 0 8px 30px rgba(107, 159, 212, 0.12);
+}
+
+.testimonial-quote {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+.testimonial-quote::before {
+  content: '"';
+  font-size: 3rem;
+  color: var(--primary-light);
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.testimonial-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--secondary-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.testimonial-author-info span {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.testimonial-author-info small {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Safe Space Messaging */
+.safe-space-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--secondary-light) 0%, var(--accent-light) 100%);
+  border-radius: 2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--secondary-dark);
+}
+
+:root.dark .safe-space-tag {
+  background: linear-gradient(135deg, rgba(168, 212, 168, 0.2) 0%, rgba(212, 201, 224, 0.2) 100%);
+  color: var(--secondary-light);
+}
+
+/* Enhanced Wellness Tip for Home */
+.wellness-tip-home {
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--secondary-light) 50%, var(--primary-light) 100%);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  animation: pulse-soft 4s ease-in-out infinite;
+}
+
+:root.dark .wellness-tip-home {
+  background: linear-gradient(135deg, rgba(184, 169, 201, 0.2) 0%, rgba(143, 188, 143, 0.2) 50%, rgba(107, 159, 212, 0.2) 100%);
+}
+
+.wellness-tip-home::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 60%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Gentle Feature Card */
+.feature-card-calm {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card-calm::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-light) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.feature-card-calm:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: 0 12px 35px rgba(107, 159, 212, 0.15);
+}
+
+.feature-card-calm:hover::before {
+  opacity: 0.05;
+}
+
+.feature-card-calm>* {
+  position: relative;
+  z-index: 1;
+}
+
+.feature-icon-calm {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.feature-card-calm:hover .feature-icon-calm {
+  transform: scale(1.1);
+}
+
+/* CTA Calm Style */
+.cta-calm {
+  background: linear-gradient(135deg, rgba(107, 159, 212, 0.08) 0%, rgba(184, 169, 201, 0.08) 50%, rgba(143, 188, 143, 0.08) 100%);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-calm::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center top, var(--primary-light) 0%, transparent 50%);
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+:root.dark .cta-calm {
+  background: linear-gradient(135deg, rgba(107, 159, 212, 0.1) 0%, rgba(184, 169, 201, 0.1) 50%, rgba(143, 188, 143, 0.1) 100%);
+}
+
+/* Gentle Button Variant */
+.btn-gentle {
+  background: var(--surface);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gentle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--primary);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.btn-gentle:hover::before {
+  transform: translateY(0);
+}
+
+.btn-gentle span {
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease;
+}
+
+.btn-gentle:hover span {
+  color: white;
+}
+
+/* Stats Section Calm */
+.stat-item-calm {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.stat-value-calm {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label-calm {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Ambient Pattern Overlay */
+.ambient-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 80%, var(--primary-light) 0%, transparent 25%),
+    radial-gradient(circle at 80% 20%, var(--accent-light) 0%, transparent 25%),
+    radial-gradient(circle at 50% 50%, var(--secondary-light) 0%, transparent 35%);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+:root.dark .ambient-pattern {
+  opacity: 0.08;
+}
+
+/* Floating Animation for Decorative Elements */
+.float-gentle {
+  animation: float-gentle 6s ease-in-out infinite;
+}
+
+.float-gentle-delay-1 {
+  animation-delay: 1s;
+}
+
+.float-gentle-delay-2 {
+  animation-delay: 2s;
+}
+
+/* Transition Utilities */
+.transition-calm {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus States for Accessibility */
+.focus-calm:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(107, 159, 212, 0.3);
+}
+
+.focus-calm:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

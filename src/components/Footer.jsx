@@ -102,7 +102,7 @@ export default function Footer() {
                         <ul className="space-y-3">
                             <li className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                                 <Mail className="w-4 h-4 text-[var(--primary)]" />
-                                support@nafas.app
+                                support@nafas.website
                             </li>
                             <li className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                                 <Phone className="w-4 h-4 text-[var(--primary)]" />
