@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { Calendar, Plus, TrendingUp, Clock, ChevronLeft, ChevronRight, Sparkles, Smile, Frown, Meh, Activity, X } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { Calendar, Plus, TrendingUp, Clock, ChevronLeft, ChevronRight, Sparkles, Smile, Frown, Meh, Activity, X, Target, Flame, BarChart3 } from 'lucide-react';
 import api from '../api/axios';
 
 const moodEmojis = [
@@ -227,121 +226,183 @@ export default function TrackMood() {
 
                     {/* Right Column: History & Stats */}
                     <div className="lg:col-span-5 space-y-8">
-                        {/* Interactive Stats Card with Chart */}
-                        <div className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-8 opacity-10">
-                                <TrendingUp size={120} />
-                            </div>
-                            <div className="relative z-10">
-                                <h3 className="text-xl font-bold mb-1">Your Weekly Pulse</h3>
-                                <p className="text-blue-100 text-sm mb-4">Track your emotional journey</p>
-
-                                {moodHistory.length > 0 ? (
-                                    <div className="h-40 mt-2">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart
-                                                data={moodHistory.slice(0, 7).reverse().map((entry) => {
-                                                    const date = new Date(entry.created_at);
-                                                    const mood = moodEmojis.find(m => m.type === entry.mood_type);
-                                                    return {
-                                                        name: date.toLocaleDateString('en-US', { weekday: 'short' }),
-                                                        time: date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-                                                        fullDate: date.toLocaleDateString(),
-                                                        day: date.getDate(),
-                                                        intensity: entry.intensity,
-                                                        mood: entry.mood_type,
-                                                        emoji: mood?.emoji || '😊'
-                                                    };
-                                                })}
-                                                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                                            >
-                                                <defs>
-                                                    <linearGradient id="intensityGradient" x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="5%" stopColor="#ffffff" stopOpacity={0.4} />
-                                                        <stop offset="95%" stopColor="#ffffff" stopOpacity={0.05} />
-                                                    </linearGradient>
-                                                </defs>
-                                                <XAxis
-                                                    dataKey="name"
-                                                    axisLine={false}
-                                                    tickLine={false}
-                                                    tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 11 }}
-                                                />
-                                                <YAxis
-                                                    domain={[0, 5]}
-                                                    axisLine={false}
-                                                    tickLine={false}
-                                                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
-                                                    ticks={[1, 2, 3, 4, 5]}
-                                                />
-                                                <Tooltip
-                                                    contentStyle={{
-                                                        backgroundColor: 'rgba(255,255,255,0.95)',
-                                                        border: 'none',
-                                                        borderRadius: '12px',
-                                                        boxShadow: '0 4px 20px rgba(0,0,0,0.15)'
-                                                    }}
-                                                    content={({ active, payload }) => {
-                                                        if (active && payload && payload.length) {
-                                                            const data = payload[0].payload;
-                                                            return (
-                                                                <div className="bg-white p-3 rounded-xl shadow-lg border border-gray-100">
-                                                                    <div className="flex items-center gap-2 mb-1">
-                                                                        <span className="text-xl">{data.emoji}</span>
-                                                                        <span className="font-semibold text-gray-800 capitalize">{data.mood}</span>
-                                                                    </div>
-                                                                    <div className="text-sm text-gray-600 mb-1">
-                                                                        Intensity: <span className="font-medium text-blue-600">{data.intensity}/5</span>
-                                                                    </div>
-                                                                    <div className="text-xs text-gray-400 border-t pt-1 mt-1">
-                                                                        {data.name}, {data.time}
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        }
-                                                        return null;
-                                                    }}
-                                                />
-                                                <Area
-                                                    type="monotone"
-                                                    dataKey="intensity"
-                                                    stroke="#ffffff"
-                                                    strokeWidth={3}
-                                                    fill="url(#intensityGradient)"
-                                                    dot={(props) => {
-                                                        const { cx, cy, payload } = props;
-                                                        return (
-                                                            <g key={`dot-${payload.day}`}>
-                                                                <circle cx={cx} cy={cy} r={12} fill="white" opacity={0.9} />
-                                                                <text x={cx} y={cy + 5} textAnchor="middle" fontSize="14">
-                                                                    {payload.emoji}
-                                                                </text>
-                                                            </g>
-                                                        );
-                                                    }}
-                                                    activeDot={(props) => {
-                                                        const { cx, cy, payload } = props;
-                                                        return (
-                                                            <g key={`active-dot-${payload.day}`}>
-                                                                <circle cx={cx} cy={cy} r={16} fill="white" stroke="#3b82f6" strokeWidth={2} />
-                                                                <text x={cx} y={cy + 5} textAnchor="middle" fontSize="16">
-                                                                    {payload.emoji}
-                                                                </text>
-                                                            </g>
-                                                        );
-                                                    }}
-                                                />
-                                            </AreaChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                ) : (
-                                    <div className="h-32 flex items-center justify-center">
-                                        <div className="text-center">
-                                            <div className="text-3xl mb-2">📊</div>
-                                            <p className="text-blue-100 text-sm">Log your first mood to see the chart!</p>
+                        {/* Stats Cards Row */}
+                        <div className="grid grid-cols-3 gap-4">
+                            {/* Most Frequent Mood */}
+                            <div className="bg-[var(--surface)] rounded-2xl p-4 border border-[var(--border)] hover:shadow-md transition-shadow">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Target className="w-4 h-4 text-[var(--text-muted)]" />
+                                    <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Top Mood</span>
+                                </div>
+                                {(() => {
+                                    if (moodHistory.length === 0) return <div className="text-2xl text-center py-2 opacity-30">—</div>;
+                                    const moodCounts = moodHistory.reduce((acc, entry) => {
+                                        acc[entry.mood_type] = (acc[entry.mood_type] || 0) + 1;
+                                        return acc;
+                                    }, {});
+                                    const topMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0];
+                                    const moodEmoji = moodEmojis.find(m => m.type === topMood[0]);
+                                    return (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-3xl">{moodEmoji?.emoji || '😊'}</span>
+                                            <div>
+                                                <div className="font-bold text-[var(--text-primary)] capitalize">{topMood[0]}</div>
+                                                <div className="text-xs text-[var(--text-muted)]">{topMood[1]} times</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    );
+                                })()}
+                            </div>
+
+                            {/* Streak */}
+                            <div className="bg-[var(--surface)] rounded-2xl p-4 border border-[var(--border)] hover:shadow-md transition-shadow">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Flame className="w-4 h-4 text-[var(--text-muted)]" />
+                                    <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Streak</span>
+                                </div>
+                                {(() => {
+                                    if (moodHistory.length === 0) return <div className="text-2xl text-center py-2 opacity-30">0</div>;
+                                    const sortedDates = [...new Set(moodHistory.map(m => new Date(m.created_at).toDateString()))].sort((a, b) => new Date(b) - new Date(a));
+                                    let streak = 0;
+                                    const today = new Date().toDateString();
+                                    if (sortedDates[0] === today || sortedDates[0] === new Date(Date.now() - 86400000).toDateString()) {
+                                        for (let i = 0; i < sortedDates.length; i++) {
+                                            const expectedDate = new Date(Date.now() - i * 86400000).toDateString();
+                                            if (sortedDates[i] === expectedDate) {
+                                                streak++;
+                                            } else {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    return (
+                                        <div>
+                                            <div className="text-3xl font-bold text-[var(--primary)]">{streak}</div>
+                                            <div className="text-xs text-[var(--text-muted)]">{streak === 1 ? 'day' : 'days'}</div>
+                                        </div>
+                                    );
+                                })()}
+                            </div>
+
+                            {/* Monthly Summary */}
+                            <div className="bg-[var(--surface)] rounded-2xl p-4 border border-[var(--border)] hover:shadow-md transition-shadow">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <BarChart3 className="w-4 h-4 text-[var(--text-muted)]" />
+                                    <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">This Month</span>
+                                </div>
+                                {(() => {
+                                    const thisMonth = moodHistory.filter(entry => {
+                                        const entryDate = new Date(entry.created_at);
+                                        const now = new Date();
+                                        return entryDate.getMonth() === now.getMonth() && entryDate.getFullYear() === now.getFullYear();
+                                    });
+                                    const avgIntensity = thisMonth.length > 0
+                                        ? (thisMonth.reduce((sum, m) => sum + m.intensity, 0) / thisMonth.length).toFixed(1)
+                                        : 0;
+                                    return (
+                                        <div>
+                                            <div className="text-2xl font-bold text-[var(--text-primary)]">{thisMonth.length}</div>
+                                            <div className="text-xs text-[var(--text-muted)]">Avg: {avgIntensity}/5</div>
+                                        </div>
+                                    );
+                                })()}
+                            </div>
+                        </div>
+
+                        {/* Calendar Heatmap */}
+                        <div className="bg-[var(--surface)] rounded-3xl p-6 border border-[var(--border)] shadow-sm">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="font-bold text-[var(--text-primary)] flex items-center gap-2">
+                                    <Calendar className="w-5 h-5 text-[var(--text-muted)]" />
+                                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                                </h3>
+                            </div>
+
+                            {/* Calendar Grid */}
+                            <div className="space-y-2">
+                                {/* Weekday headers */}
+                                <div className="grid grid-cols-7 gap-2 mb-2">
+                                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                                        <div key={day} className="text-center text-xs font-medium text-[var(--text-muted)] uppercase">
+                                            {day}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Calendar days */}
+                                {(() => {
+                                    const now = new Date();
+                                    const year = now.getFullYear();
+                                    const month = now.getMonth();
+                                    const firstDay = new Date(year, month, 1).getDay();
+                                    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                                    const days = [];
+                                    for (let i = 0; i < firstDay; i++) {
+                                        days.push(<div key={`empty-${i}`} className="aspect-square" />);
+                                    }
+
+                                    for (let day = 1; day <= daysInMonth; day++) {
+                                        const dateStr = new Date(year, month, day).toDateString();
+                                        const dayEntries = moodHistory.filter(m => new Date(m.created_at).toDateString() === dateStr);
+                                        const isToday = day === now.getDate();
+
+                                        days.push(
+                                            <div
+                                                key={day}
+                                                className={`aspect-square rounded-lg border-2 transition-all group relative ${isToday
+                                                        ? 'border-[var(--primary)] bg-[var(--primary)]/5'
+                                                        : dayEntries.length > 0
+                                                            ? 'border-[var(--border)] bg-[var(--surface-hover)] cursor-pointer hover:border-[var(--primary)] hover:scale-105'
+                                                            : 'border-[var(--border-light)] opacity-30'
+                                                    }`}
+                                            >
+                                                <div className="flex flex-col items-center justify-center h-full p-1">
+                                                    <div className={`text-xs font-medium mb-1 ${isToday ? 'text-[var(--primary)]' : 'text-[var(--text-secondary)]'}`}>
+                                                        {day}
+                                                    </div>
+                                                    {dayEntries.length > 0 && (
+                                                        <div className="flex flex-wrap gap-0.5 justify-center">
+                                                            {dayEntries.slice(0, 2).map((entry, i) => {
+                                                                const mood = moodEmojis.find(m => m.type === entry.mood_type);
+                                                                return (
+                                                                    <span key={i} className="text-sm">
+                                                                        {mood?.emoji || '😊'}
+                                                                    </span>
+                                                                );
+                                                            })}
+                                                            {dayEntries.length > 2 && (
+                                                                <span className="text-[8px] text-[var(--text-muted)] font-bold">
+                                                                    +{dayEntries.length - 2}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {dayEntries.length > 0 && (
+                                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+                                                        <div className="bg-[var(--text-primary)] text-white text-xs rounded-lg p-2 shadow-lg whitespace-nowrap">
+                                                            <div className="font-semibold mb-1">{new Date(year, month, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                                                            {dayEntries.map((entry, i) => {
+                                                                const mood = moodEmojis.find(m => m.type === entry.mood_type);
+                                                                return (
+                                                                    <div key={i} className="flex items-center gap-1 text-[10px]">
+                                                                        <span>{mood?.emoji}</span>
+                                                                        <span className="capitalize">{entry.mood_type}</span>
+                                                                        <span className="opacity-70">({entry.intensity}/5)</span>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    }
+
+                                    return <div className="grid grid-cols-7 gap-2">{days}</div>;
+                                })()}
                             </div>
                         </div>
 
