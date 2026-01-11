@@ -213,9 +213,10 @@ export default function Learn() {
                                 </p>
                             </div>
                             <div className={`p-3 rounded-xl bg-opacity-10 ${theme.light.split(' ')[0]}`}>
-                                {categoryIcons[selectedCategory] && (
-                                    <categoryIcons.depression className={`w-8 h-8 ${theme.icon}`} /> // defaulting icon for now to ensure render
-                                )}
+                                {categoryIcons[selectedCategory] && (() => {
+                                    const Icon = categoryIcons[selectedCategory];
+                                    return <Icon className={`w-8 h-8 ${theme.icon}`} />;
+                                })()}
                             </div>
                         </div>
                         <div className="flex gap-3 mt-6">

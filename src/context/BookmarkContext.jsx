@@ -9,6 +9,15 @@ export function BookmarkProvider({ children }) {
     const [bookmarks, setBookmarks] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    // Helper to normalize content type
+    const normalizeType = (fullType) => {
+        if (!fullType) return '';
+        if (fullType.includes('Article')) return 'article';
+        if (fullType.includes('Video')) return 'video';
+        if (fullType.includes('Exercise')) return 'exercise';
+        return fullType.toLowerCase();
+    };
+
     // Fetch bookmarks
     const fetchBookmarks = useCallback(async () => {
         if (!isAuthenticated) return;
@@ -16,8 +25,17 @@ export function BookmarkProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.get('/content/bookmarks');
-            const data = res.data?.data?.data || res.data?.data || res.data || [];
-            setBookmarks(Array.isArray(data) ? data : []);
+            const rawData = res.data?.data?.data || res.data?.data || res.data || [];
+            const data = Array.isArray(rawData) ? rawData : [];
+
+            // Normalize the data structure for consistent checking
+            const normalizedBookmarks = data.map(b => ({
+                ...b,
+                normalized_type: normalizeType(b.bookmarkable_type),
+                normalized_id: b.bookmarkable_id
+            }));
+
+            setBookmarks(normalizedBookmarks);
         } catch (error) {
             console.error('Failed to fetch bookmarks:', error);
         } finally {
@@ -27,8 +45,10 @@ export function BookmarkProvider({ children }) {
 
     // Check if an item is bookmarked
     const isBookmarked = useCallback((contentType, contentId) => {
+        if (!bookmarks.length) return false;
         return bookmarks.some(b =>
-            b.content_type === contentType && b.content_id === contentId
+            b.normalized_type === contentType &&
+            parseInt(b.normalized_id) === parseInt(contentId)
         );
     }, [bookmarks]);
 
@@ -36,25 +56,49 @@ export function BookmarkProvider({ children }) {
     const toggleBookmark = async (contentType, contentId) => {
         if (!isAuthenticated) return false;
 
-        try {
-            const res = await api.post('/content/bookmark', {
-                content_type: contentType,
-                content_id: contentId,
-            });
+        // Optimistic update
+        const isCurrentlyBookmarked = isBookmarked(contentType, contentId);
 
-            // If it was bookmarked, remove it; otherwise add it
-            if (isBookmarked(contentType, contentId)) {
+        try {
+            // Update state immediately
+            if (isCurrentlyBookmarked) {
                 setBookmarks(prev => prev.filter(b =>
-                    !(b.content_type === contentType && b.content_id === contentId)
+                    !(b.normalized_type === contentType && parseInt(b.normalized_id) === parseInt(contentId))
                 ));
             } else {
-                // Add new bookmark to state
-                const newBookmark = res.data?.data || { content_type: contentType, content_id: contentId };
-                setBookmarks(prev => [...prev, newBookmark]);
+                setBookmarks(prev => [...prev, {
+                    normalized_type: contentType,
+                    normalized_id: contentId,
+                    bookmarkable_type: `App\\Models\\${contentType.charAt(0).toUpperCase() + contentType.slice(1)}`, // Mock for internal consistency
+                    bookmarkable_id: contentId
+                }]);
             }
+
+            // Make API call
+            await api.post('/content/bookmark', {
+                type: contentType,
+                id: contentId,
+            });
+
+            // Re-fetch to ensure sync with server (optional, but safer)
+            // fetchBookmarks(); 
             return true;
         } catch (error) {
             console.error('Failed to toggle bookmark:', error);
+            // Revert on error
+            if (isCurrentlyBookmarked) {
+                // Add it back
+                setBookmarks(prev => [...prev, {
+                    normalized_type: contentType,
+                    normalized_id: contentId,
+                    bookmarkable_id: contentId
+                }]);
+            } else {
+                // Remove it
+                setBookmarks(prev => prev.filter(b =>
+                    !(b.normalized_type === contentType && parseInt(b.normalized_id) === parseInt(contentId))
+                ));
+            }
             return false;
         }
     };
