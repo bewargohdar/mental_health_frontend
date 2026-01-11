@@ -120,8 +120,8 @@ export default function Bookmarks() {
                             <div key={bookmark.id} className="card p-6 card-hover">
                                 <div className="flex items-start gap-4">
                                     {/* Type Icon */}
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getTypeColor(bookmark.content_type)}`}>
-                                        {getIcon(bookmark.content_type)}
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getTypeColor(bookmark.normalized_type)}`}>
+                                        {getIcon(bookmark.normalized_type)}
                                     </div>
 
                                     {/* Content */}
@@ -129,19 +129,19 @@ export default function Bookmarks() {
                                         <div className="flex items-start justify-between gap-4">
                                             <div>
                                                 <h3 className="font-semibold text-[var(--text-primary)] mb-1 line-clamp-1">
-                                                    {bookmark.content?.title || bookmark.title || 'Untitled'}
+                                                    {bookmark.bookmarkable?.title || 'Untitled'}
                                                 </h3>
                                                 <p className="text-sm text-[var(--text-secondary)] line-clamp-2 mb-2">
-                                                    {bookmark.content?.description || bookmark.description || 'No description available.'}
+                                                    {bookmark.bookmarkable?.description || 'No description available.'}
                                                 </p>
                                                 <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
-                                                    <span className={`px-2 py-0.5 rounded-full ${getTypeColor(bookmark.content_type)}`}>
-                                                        {bookmark.content_type}
+                                                    <span className={`px-2 py-0.5 rounded-full ${getTypeColor(bookmark.normalized_type)}`}>
+                                                        {bookmark.normalized_type}
                                                     </span>
-                                                    {bookmark.content?.read_time && (
+                                                    {bookmark.bookmarkable?.read_time && (
                                                         <span className="flex items-center gap-1">
                                                             <Clock className="w-3 h-3" />
-                                                            {bookmark.content.read_time} min
+                                                            {bookmark.bookmarkable.read_time} min
                                                         </span>
                                                     )}
                                                     {bookmark.created_at && (
@@ -154,12 +154,7 @@ export default function Bookmarks() {
 
                                             {/* Actions */}
                                             <div className="flex items-center gap-2 flex-shrink-0">
-                                                <Link
-                                                    to={`/learn/${bookmark.content?.category || 'depression'}/${bookmark.content_type}s`}
-                                                    className="p-2 rounded-lg bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--primary)] hover:text-white transition-colors"
-                                                >
-                                                    <ExternalLink className="w-4 h-4" />
-                                                </Link>
+
                                                 <button
                                                     onClick={() => handleRemove(bookmark)}
                                                     disabled={removing === bookmark.id}
