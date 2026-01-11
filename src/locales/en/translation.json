@@ -113,7 +113,8 @@
         "loginToPost": "Login to Post",
         "chat": "Community Chat",
         "typeMesage": "Type a message...",
-        "send": "Send"
+        "send": "Send",
+        "writeComment": "Write a supportive comment..."
     },
     "doctors": {
         "title": "Find a Doctor",
