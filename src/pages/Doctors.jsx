@@ -191,8 +191,8 @@ export default function Doctors() {
                                     key={spec}
                                     onClick={() => setSelectedSpecialty(spec)}
                                     className={`px-5 py-3 rounded-2xl text-sm font-bold whitespace-nowrap transition-all ${selectedSpecialty === spec
-                                            ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none'
-                                            : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 border border-gray-100 dark:border-gray-700'
+                                        ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none'
+                                        : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 border border-gray-100 dark:border-gray-700'
                                         }`}
                                 >
                                     {spec === 'all' ? 'All' : spec}
@@ -228,8 +228,8 @@ export default function Doctors() {
                             <div key={doctor.id} className="group bg-white dark:bg-gray-800 rounded-[2rem] p-6 lg:p-8 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 dark:hover:shadow-black/20 transition-all duration-300 relative overflow-hidden flex flex-col items-center text-center">
                                 {/* Availability Indicator */}
                                 <div className={`absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-colors ${doctor.doctor_profile?.availabilities?.length > 0
-                                        ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-100 dark:border-green-900'
-                                        : 'bg-gray-50 dark:bg-gray-700/50 text-gray-400 border-gray-100 dark:border-gray-700'
+                                    ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-100 dark:border-green-900'
+                                    : 'bg-gray-50 dark:bg-gray-700/50 text-gray-400 border-gray-100 dark:border-gray-700'
                                     }`}>
                                     <div className={`w-2 h-2 rounded-full ${doctor.doctor_profile?.availabilities?.length > 0 ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
                                     {doctor.doctor_profile?.availabilities?.length > 0 ? 'Accepting' : 'Full'}
@@ -258,8 +258,8 @@ export default function Doctors() {
                                 <button
                                     onClick={() => openBookingModal(doctor)}
                                     className={`mt-auto w-full py-3.5 px-6 rounded-xl font-bold transition-all transform active:scale-95 ${doctor.doctor_profile?.availabilities?.length > 0
-                                            ? 'bg-[var(--primary)] text-white hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 dark:hover:shadow-none'
-                                            : 'bg-gray-100 dark:bg-gray-700/50 text-gray-400 cursor-not-allowed'
+                                        ? 'bg-[var(--primary)] text-white hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 dark:hover:shadow-none'
+                                        : 'bg-gray-100 dark:bg-gray-700/50 text-gray-400 cursor-not-allowed'
                                         }`}
                                     disabled={!doctor.doctor_profile?.availabilities?.length}
                                 >
@@ -305,7 +305,7 @@ export default function Doctors() {
                                     </button>
                                 )}
                                 <div>
-                                    <h3 className="font-bold text-lg text-[var(--text-primary)]">
+                                    <h3 className="font-bold text-lg text-gray-900 dark:text-white">
                                         {bookingStep === 5 ? 'Confirmed!' : 'Book Session'}
                                     </h3>
                                     {bookingStep < 5 && <p className="text-xs text-[var(--text-muted)] font-medium">Step {bookingStep} of 4</p>}
@@ -334,21 +334,21 @@ export default function Doctors() {
                                     </div>
 
                                     <div>
-                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-1">{selectedDoctor.name}</h2>
-                                        <p className="text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/20 inline-block px-3 py-1 rounded-lg text-sm">{selectedDoctor.specialty}</p>
+                                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{selectedDoctor.name}</h2>
+                                        <p className="text-teal-600 dark:text-teal-400 font-medium bg-teal-50 dark:bg-teal-900/20 inline-block px-3 py-1 rounded-lg text-sm">{selectedDoctor.specialty}</p>
                                     </div>
 
                                     <div className="grid grid-cols-3 gap-2 text-center text-sm py-4 border-y border-gray-100 dark:border-gray-800">
                                         <div>
-                                            <p className="font-bold text-[var(--text-primary)] text-lg">15+</p>
+                                            <p className="font-bold text-gray-900 dark:text-white text-lg">15+</p>
                                             <p className="text-[var(--text-muted)] text-xs">Years</p>
                                         </div>
                                         <div className="border-x border-gray-100 dark:border-gray-800">
-                                            <p className="font-bold text-[var(--text-primary)] text-lg">{selectedDoctor.rating || '4.9'}</p>
+                                            <p className="font-bold text-gray-900 dark:text-white text-lg">{selectedDoctor.rating || '4.9'}</p>
                                             <p className="text-[var(--text-muted)] text-xs">Rating</p>
                                         </div>
                                         <div>
-                                            <p className="font-bold text-[var(--text-primary)] text-lg">100+</p>
+                                            <p className="font-bold text-gray-900 dark:text-white text-lg">100+</p>
                                             <p className="text-[var(--text-muted)] text-xs">Patients</p>
                                         </div>
                                     </div>
@@ -375,7 +375,7 @@ export default function Doctors() {
                             {bookingStep === 2 && (
                                 <div className="space-y-6">
                                     <div className="text-center mb-2">
-                                        <h4 className="text-xl font-bold text-[var(--text-primary)]">Pick a Date</h4>
+                                        <h4 className="text-xl font-bold text-gray-900 dark:text-white">Pick a Date</h4>
                                         <p className="text-[var(--text-secondary)] text-sm">When works best for you?</p>
                                     </div>
 
@@ -389,8 +389,8 @@ export default function Doctors() {
                                                     key={idx}
                                                     onClick={() => handleDateSelect(date)}
                                                     className={`p-3 rounded-2xl text-center transition-all border-2 ${isSelected
-                                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                                                            : 'border-transparent bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:border-gray-200 dark:hover:border-gray-600 hover:shadow-sm'
+                                                        ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300'
+                                                        : 'border-transparent bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:border-gray-200 dark:hover:border-gray-600 hover:shadow-sm'
                                                         }`}
                                                 >
                                                     <div className="text-xs font-bold uppercase opacity-60 mb-1">
@@ -415,7 +415,7 @@ export default function Doctors() {
                             {bookingStep === 3 && (
                                 <div className="space-y-6">
                                     <div className="text-center mb-2">
-                                        <h4 className="text-xl font-bold text-[var(--text-primary)]">Select Time</h4>
+                                        <h4 className="text-xl font-bold text-gray-900 dark:text-white">Select Time</h4>
                                         <p className="text-[var(--text-secondary)] text-sm">{selectedDate?.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
                                     </div>
 
@@ -431,7 +431,7 @@ export default function Doctors() {
                                             <p className="text-[var(--text-muted)] font-medium">No slots available on this date.</p>
                                             <button
                                                 onClick={() => setBookingStep(2)}
-                                                className="mt-4 text-blue-600 dark:text-blue-400 font-bold hover:underline text-sm"
+                                                className="mt-4 text-teal-600 dark:text-teal-400 font-bold hover:underline text-sm"
                                             >
                                                 Change Date
                                             </button>
@@ -444,10 +444,10 @@ export default function Doctors() {
                                                     onClick={() => slot.available && setSelectedSlot(slot.time)}
                                                     disabled={!slot.available}
                                                     className={`py-3 px-2 rounded-xl text-center transition-all font-medium text-sm border ${selectedSlot === slot.time
-                                                            ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200 dark:shadow-none'
-                                                            : slot.available
-                                                                ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-300 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400'
-                                                                : 'bg-gray-50 dark:bg-gray-900 border-transparent text-gray-300 dark:text-gray-700 cursor-not-allowed line-through'
+                                                        ? 'bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-200 dark:shadow-none'
+                                                        : slot.available
+                                                            ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400'
+                                                            : 'bg-gray-50 dark:bg-gray-900 border-transparent text-gray-300 dark:text-gray-700 cursor-not-allowed line-through'
                                                         }`}
                                                 >
                                                     {slot.time}
@@ -468,9 +468,9 @@ export default function Doctors() {
                             {/* Step 4: Confirm */}
                             {bookingStep === 4 && (
                                 <div className="space-y-6">
-                                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-6 rounded-3xl border border-blue-100 dark:border-blue-900">
+                                    <div className="bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 p-6 rounded-3xl border border-teal-100 dark:border-teal-900">
                                         <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-                                            <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                            <FileText className="w-5 h-5 text-teal-600 dark:text-teal-400" />
                                             Summary
                                         </h4>
                                         <div className="space-y-4">
@@ -490,21 +490,21 @@ export default function Doctors() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-bold text-[var(--text-primary)] mb-2 pl-1">
+                                        <label className="block text-sm font-bold text-gray-900 dark:text-white mb-2 pl-1">
                                             Add a note for {selectedDoctor.name.split(' ')[0]} (Optional)
                                         </label>
                                         <textarea
                                             value={bookingNote}
                                             onChange={(e) => setBookingNote(e.target.value)}
                                             placeholder="What's on your mind? Briefly describe what you'd like to discuss..."
-                                            className="w-full p-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl resize-none h-32 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 focus:bg-white dark:focus:bg-gray-700 transition-all custom-scrollbar text-[var(--text-primary)]"
+                                            className="w-full p-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl resize-none h-32 focus:ring-2 focus:ring-teal-100 dark:focus:ring-teal-900 focus:bg-white dark:focus:bg-gray-700 transition-all custom-scrollbar text-[var(--text-primary)]"
                                         />
                                     </div>
 
                                     <button
                                         onClick={handleBookAppointment}
                                         disabled={submitting}
-                                        className="w-full btn-primary py-4 text-lg shadow-xl shadow-blue-100 dark:shadow-none hover:shadow-blue-200 disabled:opacity-70"
+                                        className="w-full btn-primary bg-teal-600 hover:bg-teal-700 py-4 text-lg shadow-xl shadow-teal-100 dark:shadow-none hover:shadow-teal-200 disabled:opacity-70"
                                     >
                                         {submitting ? 'Confirming...' : 'Confirm Appointment'}
                                     </button>
@@ -517,7 +517,7 @@ export default function Doctors() {
                                     <div className="w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6 animate-scale-in">
                                         <Check className="w-12 h-12 text-green-600 dark:text-green-400" />
                                     </div>
-                                    <h4 className="text-3xl font-bold text-[var(--text-primary)] mb-4">You're All Set!</h4>
+                                    <h4 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">You're All Set!</h4>
                                     <p className="text-[var(--text-secondary)] mb-8 max-w-xs mx-auto">
                                         Your session with <span className="font-bold text-gray-900 dark:text-white">{selectedDoctor.name}</span> has been confirmed.
                                     </p>
