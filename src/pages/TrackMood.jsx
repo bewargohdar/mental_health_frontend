@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Calendar, Plus, TrendingUp, Clock, ChevronLeft, ChevronRight, Sparkles, Smile, Frown, Meh, Activity, X } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '../api/axios';
 
 const moodEmojis = [
@@ -145,8 +146,8 @@ export default function TrackMood() {
                                                     key={mood.type}
                                                     onClick={() => setSelectedMood(mood)}
                                                     className={`relative p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-2 group ${selectedMood?.type === mood.type
-                                                            ? `${mood.color} border-current ring-2 ring-offset-2 ring-blue-100`
-                                                            : 'border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--surface-hover)]'
+                                                        ? `${mood.color} border-current ring-2 ring-offset-2 ring-blue-100`
+                                                        : 'border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--surface-hover)]'
                                                         }`}
                                                 >
                                                     <span className={`text-4xl transition-transform duration-300 ${selectedMood?.type === mood.type ? 'scale-125' : 'group-hover:scale-110'}`}>
@@ -226,33 +227,96 @@ export default function TrackMood() {
 
                     {/* Right Column: History & Stats */}
                     <div className="lg:col-span-5 space-y-8">
-                        {/* Interactive Stats Card - Placeholder or Simple Visual */}
+                        {/* Interactive Stats Card with Chart */}
                         <div className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-8 opacity-10">
                                 <TrendingUp size={120} />
                             </div>
                             <div className="relative z-10">
                                 <h3 className="text-xl font-bold mb-1">Your Weekly Pulse</h3>
-                                <p className="text-blue-100 text-sm mb-6">Keep tracking to see patterns.</p>
-                                <div className="flex items-end gap-2 h-24 mt-4">
-                                    {/* Simple visual representation of last 7 entries (or fewer) */}
-                                    {moodHistory.slice(0, 7).reverse().map((entry, i) => {
-                                        const mood = moodEmojis.find(m => m.type === entry.mood_type);
-                                        const height = (entry.intensity / 5) * 100;
-                                        return (
-                                            <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
-                                                <div
-                                                    className="w-full bg-white/20 rounded-t-md transition-all hover:bg-white/40"
-                                                    style={{ height: `${height}%` }}
-                                                ></div>
-                                                <span className="text-[10px] opacity-60">{new Date(entry.created_at).getDate()}</span>
-                                            </div>
-                                        )
-                                    })}
-                                    {moodHistory.length === 0 && (
-                                        <div className="w-full text-center text-sm opacity-60 self-center">No data yet</div>
-                                    )}
-                                </div>
+                                <p className="text-blue-100 text-sm mb-4">Track your emotional journey</p>
+
+                                {moodHistory.length > 0 ? (
+                                    <div className="h-40 mt-2">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart
+                                                data={moodHistory.slice(0, 7).reverse().map((entry) => {
+                                                    const date = new Date(entry.created_at);
+                                                    const mood = moodEmojis.find(m => m.type === entry.mood_type);
+                                                    return {
+                                                        name: date.toLocaleDateString('en-US', { weekday: 'short' }),
+                                                        day: date.getDate(),
+                                                        intensity: entry.intensity,
+                                                        mood: entry.mood_type,
+                                                        emoji: mood?.emoji || '😊'
+                                                    };
+                                                })}
+                                                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                                            >
+                                                <defs>
+                                                    <linearGradient id="intensityGradient" x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="5%" stopColor="#ffffff" stopOpacity={0.4} />
+                                                        <stop offset="95%" stopColor="#ffffff" stopOpacity={0.05} />
+                                                    </linearGradient>
+                                                </defs>
+                                                <XAxis
+                                                    dataKey="name"
+                                                    axisLine={false}
+                                                    tickLine={false}
+                                                    tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 11 }}
+                                                />
+                                                <YAxis
+                                                    domain={[0, 5]}
+                                                    axisLine={false}
+                                                    tickLine={false}
+                                                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
+                                                    ticks={[1, 2, 3, 4, 5]}
+                                                />
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        backgroundColor: 'rgba(255,255,255,0.95)',
+                                                        border: 'none',
+                                                        borderRadius: '12px',
+                                                        boxShadow: '0 4px 20px rgba(0,0,0,0.15)'
+                                                    }}
+                                                    content={({ active, payload }) => {
+                                                        if (active && payload && payload.length) {
+                                                            const data = payload[0].payload;
+                                                            return (
+                                                                <div className="bg-white p-3 rounded-xl shadow-lg">
+                                                                    <div className="flex items-center gap-2 mb-1">
+                                                                        <span className="text-xl">{data.emoji}</span>
+                                                                        <span className="font-semibold text-gray-800 capitalize">{data.mood}</span>
+                                                                    </div>
+                                                                    <div className="text-sm text-gray-600">
+                                                                        Intensity: <span className="font-medium">{data.intensity}/5</span>
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        }
+                                                        return null;
+                                                    }}
+                                                />
+                                                <Area
+                                                    type="monotone"
+                                                    dataKey="intensity"
+                                                    stroke="#ffffff"
+                                                    strokeWidth={3}
+                                                    fill="url(#intensityGradient)"
+                                                    dot={{ fill: '#ffffff', strokeWidth: 2, r: 4 }}
+                                                    activeDot={{ r: 6, fill: '#ffffff', stroke: '#3b82f6', strokeWidth: 2 }}
+                                                />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                ) : (
+                                    <div className="h-32 flex items-center justify-center">
+                                        <div className="text-center">
+                                            <div className="text-3xl mb-2">📊</div>
+                                            <p className="text-blue-100 text-sm">Log your first mood to see the chart!</p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
