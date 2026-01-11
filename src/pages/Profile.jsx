@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { User, Mail, Phone, Calendar, FileText, Camera, Save, ArrowLeft, LogOut, Trash2, Globe, Upload, X, AlertTriangle } from 'lucide-react';
+import { User, Mail, Phone, Calendar, FileText, Camera, Save, ArrowLeft, LogOut, Trash2, Globe, Upload, X, AlertTriangle, Bookmark } from 'lucide-react';
 import api from '../api/axios';
 
 export default function Profile() {
@@ -191,6 +191,26 @@ export default function Profile() {
             </div>
 
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* My Bookmarks */}
+                <Link to="/bookmarks" className="card p-6 mb-6 flex items-center justify-between group hover:border-[var(--primary)] transition-colors">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-[var(--primary)] group-hover:text-white transition-colors">
+                            <Bookmark className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                                {t('profile.myBookmarks') || 'My Bookmarks'}
+                            </h2>
+                            <p className="text-[var(--text-secondary)] text-sm">
+                                {t('profile.viewSaved') || 'View your saved content'}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-[var(--surface-hover)] flex items-center justify-center text-[var(--text-secondary)] group-hover:bg-[var(--primary)] group-hover:text-white transition-colors">
+                        <ArrowLeft className="w-5 h-5 rotate-180" />
+                    </div>
+                </Link>
+
                 {/* Language Settings */}
                 <div className="card p-6 mb-6">
                     <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
@@ -203,8 +223,8 @@ export default function Profile() {
                                 key={lang.code}
                                 onClick={() => handleLanguageChange(lang.code)}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${i18n.language === lang.code
-                                        ? 'bg-[var(--primary)] text-white'
-                                        : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
+                                    ? 'bg-[var(--primary)] text-white'
+                                    : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
                                     }`}
                             >
                                 <span className="text-lg">{lang.flag}</span>

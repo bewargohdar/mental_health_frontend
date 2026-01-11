@@ -279,8 +279,24 @@ export default function Learn() {
                                 </div>
                             </div>
                             <div className="md:col-span-2 p-6 md:p-8 bg-[var(--surface)] flex flex-col justify-center">
-                                <div className="inline-block px-3 py-1 text-xs font-semibold bg-red-100 text-red-600 rounded-full w-fit mb-3">
-                                    MUST WATCH
+                                <div className="flex items-start justify-between mb-3">
+                                    <div className="inline-block px-3 py-1 text-xs font-semibold bg-red-100 text-red-600 rounded-full">
+                                        MUST WATCH
+                                    </div>
+                                    {isAuthenticated && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleBookmark('video', featuredVideo.id);
+                                            }}
+                                            className={`transition-colors ${isBookmarked('video', featuredVideo.id)
+                                                ? 'text-[var(--primary)]'
+                                                : 'text-[var(--text-muted)] hover:text-[var(--primary)]'
+                                                }`}
+                                        >
+                                            <Bookmark className={`w-6 h-6 ${isBookmarked('video', featuredVideo.id) ? 'fill-current' : ''}`} />
+                                        </button>
+                                    )}
                                 </div>
                                 <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 line-clamp-2">
                                     {featuredVideo.title}
@@ -366,6 +382,17 @@ export default function Learn() {
                             <span className="absolute bottom-2 end-2 px-2 py-0.5 bg-black/70 text-white text-[10px] font-bold rounded">
                                 {formatDuration(video.duration)}
                             </span>
+                            {isAuthenticated && (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleBookmark('video', video.id);
+                                    }}
+                                    className="absolute top-3 right-3 p-2 rounded-full bg-black/40 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[var(--primary)]"
+                                >
+                                    <Bookmark className={`w-4 h-4 ${isBookmarked('video', video.id) ? 'fill-current' : ''}`} />
+                                </button>
+                            )}
                         </div>
                         <div className="p-4">
                             <h4 className="font-bold text-[var(--text-primary)] line-clamp-1 group-hover:text-[var(--primary)] transition-colors">
@@ -376,8 +403,9 @@ export default function Learn() {
                             </p>
                         </div>
                     </div>
-                ))}
-            </div>
+                ))
+                }
+            </div >
         );
     };
 

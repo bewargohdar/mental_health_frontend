@@ -182,5 +182,24 @@
         "invalidResetLink": "Invalid Reset Link",
         "invalidResetLinkDesc": "This password reset link is invalid or has expired",
         "requestNewLink": "Request New Link"
+    },
+    "profile": {
+        "myBookmarks": "My Bookmarks",
+        "viewSaved": "View your saved content",
+        "backToHome": "Back to Home",
+        "language": "Language",
+        "editProfile": "Edit Profile",
+        "fullName": "Full Name",
+        "email": "Email",
+        "phone": "Phone",
+        "enterPhone": "Enter your phone number",
+        "dateOfBirth": "Date of Birth",
+        "bio": "Bio",
+        "tellUs": "Tell us about yourself...",
+        "saving": "Saving...",
+        "saveChanges": "Save Changes",
+        "dangerZone": "Danger Zone",
+        "logout": "Logout",
+        "logoutAll": "Logout All Devices"
     }
 }
