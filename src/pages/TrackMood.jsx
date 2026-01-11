@@ -183,10 +183,10 @@ export default function TrackMood() {
                                                     onChange={(e) => setMoodIntensity(parseInt(e.target.value))}
                                                     className="w-full h-2 bg-[var(--light-gray)] rounded-lg appearance-none cursor-pointer accent-[var(--primary)]"
                                                 />
-                                                <div className="flex justify-between text-xs text-[var(--text-muted)] mt-2 font-medium uppercase tracking-wide">
-                                                    <span>Mild</span>
-                                                    <span>Moderate</span>
-                                                    <span>Intense</span>
+                                                <div className="flex justify-between text-xs mt-2 font-medium uppercase tracking-wide transition-colors">
+                                                    <span className={moodIntensity <= 2 ? 'text-[var(--primary)] font-bold' : 'text-[var(--text-muted)]'}>Mild</span>
+                                                    <span className={moodIntensity === 3 ? 'text-[var(--primary)] font-bold' : 'text-[var(--text-muted)]'}>Moderate</span>
+                                                    <span className={moodIntensity >= 4 ? 'text-[var(--primary)] font-bold' : 'text-[var(--text-muted)]'}>Intense</span>
                                                 </div>
                                             </div>
 
@@ -245,6 +245,8 @@ export default function TrackMood() {
                                                     const mood = moodEmojis.find(m => m.type === entry.mood_type);
                                                     return {
                                                         name: date.toLocaleDateString('en-US', { weekday: 'short' }),
+                                                        time: date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+                                                        fullDate: date.toLocaleDateString(),
                                                         day: date.getDate(),
                                                         intensity: entry.intensity,
                                                         mood: entry.mood_type,
@@ -283,13 +285,16 @@ export default function TrackMood() {
                                                         if (active && payload && payload.length) {
                                                             const data = payload[0].payload;
                                                             return (
-                                                                <div className="bg-white p-3 rounded-xl shadow-lg">
+                                                                <div className="bg-white p-3 rounded-xl shadow-lg border border-gray-100">
                                                                     <div className="flex items-center gap-2 mb-1">
                                                                         <span className="text-xl">{data.emoji}</span>
                                                                         <span className="font-semibold text-gray-800 capitalize">{data.mood}</span>
                                                                     </div>
-                                                                    <div className="text-sm text-gray-600">
-                                                                        Intensity: <span className="font-medium">{data.intensity}/5</span>
+                                                                    <div className="text-sm text-gray-600 mb-1">
+                                                                        Intensity: <span className="font-medium text-blue-600">{data.intensity}/5</span>
+                                                                    </div>
+                                                                    <div className="text-xs text-gray-400 border-t pt-1 mt-1">
+                                                                        {data.name}, {data.time}
                                                                     </div>
                                                                 </div>
                                                             );
