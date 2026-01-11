@@ -81,7 +81,7 @@ export default function Learn() {
     const navigate = useNavigate();
     const { isBookmarked, toggleBookmark } = useBookmarks();
     const { isAuthenticated } = useAuth();
-    const [searchQuery, setSearchQuery] = useState('');
+    // const [searchQuery, setSearchQuery] = useState('');
 
     // Data states
     const [contentData, setContentData] = useState([]);
@@ -184,6 +184,17 @@ export default function Learn() {
 
         fetchContent();
     }, [selectedCategory, activeTab]);
+
+    // Filter content based on search query
+    // const filteredContent = contentData.filter(item => {
+    //     if (!searchQuery) return true;
+    //     const query = searchQuery.toLowerCase();
+    //     return (
+    //         (item.title && item.title.toLowerCase().includes(query)) ||
+    //         (item.description && item.description.toLowerCase().includes(query)) ||
+    //         (item.summary && item.summary.toLowerCase().includes(query))
+    //     );
+    // });
 
     const renderOverview = () => {
         const categoryInfo = categories.find(c => c.key === selectedCategory);
@@ -528,23 +539,9 @@ export default function Learn() {
                         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4 text-[var(--text-primary)]">
                             {t('learn.title')}
                         </h1>
-                        <p className="text-lg text-[var(--text-secondary)] mb-8 leading-relaxed max-w-lg">
-                            {t('learn.subtitle')}
-                        </p>
+                        {/* Search Removed */}
 
-                        <div className="relative group max-w-lg">
-                            <div className={`absolute -inset-0.5 bg-gradient-to-r ${theme.gradient} rounded-2xl opacity-20 group-hover:opacity-40 transition duration-500 blur`}></div>
-                            <div className="relative flex items-center bg-[var(--surface)] rounded-xl border border-[var(--border)] shadow-sm">
-                                <Search className="ml-4 w-5 h-5 text-[var(--text-muted)]" />
-                                <input
-                                    type="text"
-                                    placeholder={t('learn.search')}
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full px-4 py-3.5 bg-transparent focus:outline-none text-[var(--text-primary)] placeholder-[var(--text-muted)]"
-                                />
-                            </div>
-                        </div>
+                        {/* Search Removed */}
                     </div>
                 </div>
             </div>
