@@ -303,8 +303,28 @@ export default function TrackMood() {
                                                     stroke="#ffffff"
                                                     strokeWidth={3}
                                                     fill="url(#intensityGradient)"
-                                                    dot={{ fill: '#ffffff', strokeWidth: 2, r: 4 }}
-                                                    activeDot={{ r: 6, fill: '#ffffff', stroke: '#3b82f6', strokeWidth: 2 }}
+                                                    dot={(props) => {
+                                                        const { cx, cy, payload } = props;
+                                                        return (
+                                                            <g key={`dot-${payload.day}`}>
+                                                                <circle cx={cx} cy={cy} r={12} fill="white" opacity={0.9} />
+                                                                <text x={cx} y={cy + 5} textAnchor="middle" fontSize="14">
+                                                                    {payload.emoji}
+                                                                </text>
+                                                            </g>
+                                                        );
+                                                    }}
+                                                    activeDot={(props) => {
+                                                        const { cx, cy, payload } = props;
+                                                        return (
+                                                            <g key={`active-dot-${payload.day}`}>
+                                                                <circle cx={cx} cy={cy} r={16} fill="white" stroke="#3b82f6" strokeWidth={2} />
+                                                                <text x={cx} y={cy + 5} textAnchor="middle" fontSize="16">
+                                                                    {payload.emoji}
+                                                                </text>
+                                                            </g>
+                                                        );
+                                                    }}
                                                 />
                                             </AreaChart>
                                         </ResponsiveContainer>
