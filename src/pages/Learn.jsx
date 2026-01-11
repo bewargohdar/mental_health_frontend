@@ -113,7 +113,7 @@ export default function Learn() {
         { key: 'overview', label: 'Overview', icon: BookOpen },
         { key: 'videos', label: t('learn.contentTypes.videos'), icon: Video },
         { key: 'articles', label: t('learn.contentTypes.articles'), icon: FileText },
-        { key: 'exercises', label: t('learn.contentTypes.exercises'), icon: Dumbbell },
+        // { key: 'exercises', label: t('learn.contentTypes.exercises'), icon: Dumbbell },
     ];
 
     // Validate Tab
@@ -214,12 +214,12 @@ export default function Learn() {
                             >
                                 Start Reading <ChevronRight className="w-4 h-4" />
                             </button>
-                            <button
+                            {/* <button
                                 onClick={() => navigate(`/learn/${selectedCategory}/exercises`)}
                                 className="px-5 py-2.5 rounded-full border border-[var(--border)] font-medium hover:bg-[var(--surface-hover)] transition-colors text-[var(--text-primary)] text-sm"
                             >
                                 View Exercises
-                            </button>
+                            </button> */}
                         </div>
                     </div>
 
@@ -631,7 +631,7 @@ export default function Learn() {
                                     {activeTab === 'overview' && renderOverview()}
                                     {activeTab === 'videos' && renderVideos()}
                                     {activeTab === 'articles' && renderArticles()}
-                                    {activeTab === 'exercises' && renderExercises()}
+                                    {/* {activeTab === 'exercises' && renderExercises()} */}
                                 </>
                             )}
                         </div>
