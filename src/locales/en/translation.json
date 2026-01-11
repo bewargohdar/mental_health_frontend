@@ -167,6 +167,20 @@
         "name": "Full Name",
         "forgotPassword": "Forgot Password?",
         "noAccount": "Don't have an account?",
-        "hasAccount": "Already have an account?"
+        "hasAccount": "Already have an account?",
+        "forgotPasswordTitle": "Forgot Password",
+        "forgotPasswordDesc": "Enter your email and we'll send you a reset link",
+        "sendResetLink": "Send Reset Link",
+        "backToLogin": "Back to Login",
+        "checkEmail": "Check Your Email",
+        "resetLinkSent": "We've sent a password reset link to your email",
+        "resetPasswordTitle": "Reset Password",
+        "newPassword": "New Password",
+        "confirmNewPassword": "Confirm Password",
+        "resetPassword": "Reset Password",
+        "passwordResetSuccess": "Password reset successfully!",
+        "invalidResetLink": "Invalid Reset Link",
+        "invalidResetLinkDesc": "This password reset link is invalid or has expired",
+        "requestNewLink": "Request New Link"
     }
 }
