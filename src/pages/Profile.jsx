@@ -14,8 +14,7 @@ export default function Profile() {
     const [saving, setSaving] = useState(false);
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
     const [deletingAvatar, setDeletingAvatar] = useState(false);
-    const [loggingOutAll, setLoggingOutAll] = useState(false);
-    const [showLogoutAllConfirm, setShowLogoutAllConfirm] = useState(false);
+
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -62,22 +61,7 @@ export default function Profile() {
         navigate('/');
     };
 
-    const handleLogoutAll = async () => {
-        setLoggingOutAll(true);
-        try {
-            await api.post('/auth/logout-all');
-            await logout();
-            navigate('/login');
-        } catch (error) {
-            console.error('Failed to logout all devices:', error);
-            // For demo, just logout current session
-            await logout();
-            navigate('/login');
-        } finally {
-            setLoggingOutAll(false);
-            setShowLogoutAllConfirm(false);
-        }
-    };
+
 
     const handleAvatarUpload = async (e) => {
         const file = e.target.files?.[0];
@@ -310,70 +294,10 @@ export default function Profile() {
                     </div>
                 </form>
 
-                {/* Danger Zone */}
-                <div className="card p-6">
-                    <h2 className="text-xl font-semibold mb-4 text-red-600 flex items-center gap-2">
-                        <AlertTriangle className="w-5 h-5" />
-                        {t('profile.dangerZone') || 'Danger Zone'}
-                    </h2>
-                    <div className="space-y-3">
-                        <button
-                            onClick={handleLogout}
-                            className="w-full py-3 border-2 border-[var(--border)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--surface-hover)] transition-colors flex items-center justify-center gap-2"
-                        >
-                            <LogOut className="w-5 h-5" />
-                            {t('profile.logout') || 'Logout'}
-                        </button>
-                        <button
-                            onClick={() => setShowLogoutAllConfirm(true)}
-                            className="w-full py-3 border-2 border-red-200 text-red-600 rounded-xl font-medium hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
-                        >
-                            <LogOut className="w-5 h-5" />
-                            {t('profile.logoutAll') || 'Logout All Devices'}
-                        </button>
-                    </div>
-                </div>
+
             </div>
 
-            {/* Logout All Confirmation Modal */}
-            {showLogoutAllConfirm && (
-                <div
-                    className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
-                    onClick={() => setShowLogoutAllConfirm(false)}
-                >
-                    <div
-                        className="bg-[var(--surface)] rounded-2xl max-w-sm w-full shadow-2xl"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <div className="p-6 text-center">
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <LogOut className="w-8 h-8 text-red-500" />
-                            </div>
-                            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                                Logout All Devices?
-                            </h3>
-                            <p className="text-[var(--text-secondary)] mb-6">
-                                This will log you out from all devices including this one. You'll need to log in again.
-                            </p>
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setShowLogoutAllConfirm(false)}
-                                    className="flex-1 py-3 px-4 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleLogoutAll}
-                                    disabled={loggingOutAll}
-                                    className="flex-1 py-3 px-4 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
-                                >
-                                    {loggingOutAll ? 'Logging out...' : 'Logout All'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+
         </div>
     );
 }
