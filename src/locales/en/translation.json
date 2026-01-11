@@ -140,7 +140,8 @@
         "editProfile": "Edit Profile",
         "preferences": "Preferences",
         "notifications": "Notifications",
-        "privacy": "Privacy Settings"
+        "privacy": "Privacy Settings",
+        "appointments": "My Appointments"
     },
     "common": {
         "loading": "Loading...",
