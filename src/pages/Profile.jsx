@@ -211,28 +211,7 @@ export default function Profile() {
                     </div>
                 </Link>
 
-                {/* Language Settings */}
-                <div className="card p-6 mb-6">
-                    <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                        <Globe className="w-5 h-5" />
-                        {t('profile.language') || 'Language'}
-                    </h2>
-                    <div className="flex flex-wrap gap-3">
-                        {languages.map((lang) => (
-                            <button
-                                key={lang.code}
-                                onClick={() => handleLanguageChange(lang.code)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${i18n.language === lang.code
-                                    ? 'bg-[var(--primary)] text-white'
-                                    : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
-                                    }`}
-                            >
-                                <span className="text-lg">{lang.flag}</span>
-                                <span>{lang.name}</span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
+
 
                 {/* Edit Profile Form */}
                 <form onSubmit={handleSubmit} className="card p-6 mb-6">
