@@ -20,12 +20,12 @@ export default function Bookmarks() {
     ];
 
     const filteredBookmarks = bookmarks.filter(b =>
-        filter === 'all' || b.content_type === filter
+        filter === 'all' || b.normalized_type === filter
     );
 
     const handleRemove = async (bookmark) => {
         setRemoving(bookmark.id);
-        await toggleBookmark(bookmark.content_type, bookmark.content_id);
+        await toggleBookmark(bookmark.normalized_type, bookmark.normalized_id);
         setRemoving(null);
     };
 
@@ -84,15 +84,15 @@ export default function Bookmarks() {
                             key={key}
                             onClick={() => setFilter(key)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === key
-                                    ? 'bg-[var(--primary)] text-white'
-                                    : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
+                                ? 'bg-[var(--primary)] text-white'
+                                : 'bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:bg-[var(--light-gray)]'
                                 }`}
                         >
                             <Icon className="w-4 h-4" />
                             {label}
                             {key !== 'all' && (
                                 <span className="text-xs opacity-70">
-                                    ({bookmarks.filter(b => b.content_type === key).length})
+                                    ({bookmarks.filter(b => b.normalized_type === key).length})
                                 </span>
                             )}
                         </button>
