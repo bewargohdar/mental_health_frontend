@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
 import {
     Play,
     ArrowRight,
@@ -130,6 +131,7 @@ const TestimonialCard = ({ quote, author, role }) => (
 
 export default function Home() {
     const { t } = useTranslation();
+    const { isAuthenticated } = useAuth();
     const [tips, setTips] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentTipIndex, setCurrentTipIndex] = useState(0);
@@ -528,8 +530,8 @@ export default function Home() {
                                 {t('home.ctaDesc', 'There\'s no pressure here. Take your time, explore at your own pace, and know that support is always available when you need it.')}
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <Link to="/register" className="btn-primary inline-flex items-center justify-center gap-2">
-                                    {t('home.ctaButton', 'Get Started Free')}
+                                <Link to={isAuthenticated ? "/track-mood" : "/register"} className="btn-primary inline-flex items-center justify-center gap-2">
+                                    {isAuthenticated ? t('home.ctaButtonLoggedIn', 'Track Your Mood') : t('home.ctaButton', 'Get Started Free')}
                                     <ArrowRight className="w-5 h-5" />
                                 </Link>
                                 <Link to="/learn" className="btn-gentle inline-flex items-center justify-center gap-2">
