@@ -246,7 +246,7 @@ export default function Doctors() {
                                 </div>
 
                                 {/* Content */}
-                                <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{doctor.name}</h3>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{doctor.name}</h3>
                                 <p className="text-blue-500 dark:text-blue-400 font-medium text-sm mb-4 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-lg inline-block">
                                     {doctor.specialty || 'Mental Health Professional'}
                                 </p>
