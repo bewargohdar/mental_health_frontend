@@ -80,8 +80,8 @@ export function BookmarkProvider({ children }) {
                 id: contentId,
             });
 
-            // Re-fetch to ensure sync with server (optional, but safer)
-            // fetchBookmarks(); 
+            // Re-fetch to ensure sync with server and get full bookmarkable data
+            await fetchBookmarks();
             return true;
         } catch (error) {
             console.error('Failed to toggle bookmark:', error);
