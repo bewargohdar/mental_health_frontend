@@ -292,7 +292,7 @@ export default function Profile() {
                             <div className="profile-avatar">
                                 {user?.avatar ? (
                                     <img
-                                        src={user.avatar.startsWith('http') ? user.avatar : `http://127.0.0.1:8000/storage/${user.avatar}`}
+                                        src={user.avatar.startsWith('http') ? user.avatar : `/storage/${user.avatar}`}
                                         alt={user.name}
                                     />
                                 ) : (

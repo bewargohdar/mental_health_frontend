@@ -511,7 +511,7 @@ export default function Learn() {
             {contentData.map((exercise) => {
                 let imageUrl = exercise.image_url || exercise.image;
                 if (imageUrl && !imageUrl.startsWith('http')) {
-                    imageUrl = `http://127.0.0.1:8000/storage/${imageUrl}`;
+                    imageUrl = `/storage/${imageUrl}`;
                 }
                 if (!imageUrl) imageUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(exercise.title)}&size=400&background=6366f1&color=ffffff&font-size=0.33`;
 
