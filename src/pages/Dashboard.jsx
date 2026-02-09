@@ -310,10 +310,11 @@ export default function Dashboard() {
                                     <div key={apt.id} className="flex items-center gap-3 p-3 rounded-2xl bg-[var(--background)] border border-[var(--border)] hover:border-[var(--primary-light)] transition-colors">
                                         <div className="w-10 h-10 rounded-xl bg-gray-200 overflow-hidden flex-shrink-0">
                                             <img
-                                                src={
-                                                    (isDoctor ? apt.patient?.avatar : apt.doctor?.avatar) ||
-                                                    `https://ui-avatars.com/api/?name=${encodeURIComponent((isDoctor ? apt.patient?.name : apt.doctor?.name) || 'User')}&background=random`
-                                                }
+                                                src={(() => {
+                                                    const avatar = isDoctor ? apt.patient?.avatar : apt.doctor?.avatar;
+                                                    if (!avatar) return `https://ui-avatars.com/api/?name=${encodeURIComponent((isDoctor ? apt.patient?.name : apt.doctor?.name) || 'User')}&background=random`;
+                                                    return avatar.startsWith('http') ? avatar : `/storage/${avatar}`;
+                                                })()}
                                                 alt={isDoctor ? apt.patient?.name : apt.doctor?.name}
                                                 className="w-full h-full object-cover"
                                             />

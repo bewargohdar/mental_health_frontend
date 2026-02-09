@@ -239,7 +239,7 @@ export default function Doctors() {
                                 <div className="relative mb-6 group-hover:scale-105 transition-transform duration-500">
                                     <div className="absolute inset-0 bg-blue-100 dark:bg-blue-900/30 rounded-full blur-xl opacity-0 group-hover:opacity-50 transition-opacity"></div>
                                     <img
-                                        src={doctor.image || doctor.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.name)}&size=140&background=e0e7ef&color=1f2937`}
+                                        src={(() => { const img = doctor.image || doctor.avatar; if (!img) return `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.name)}&size=140&background=e0e7ef&color=1f2937`; return img.startsWith('http') ? img : `/storage/${img}`; })()}
                                         alt={doctor.name}
                                         className="w-28 h-28 rounded-full object-cover relative z-10 border-4 border-white dark:border-gray-700 shadow-lg"
                                     />
@@ -327,7 +327,7 @@ export default function Doctors() {
                                     <div className="relative inline-block">
                                         <div className="absolute inset-0 bg-blue-100 dark:bg-blue-900/30 rounded-full blur-xl opacity-50"></div>
                                         <img
-                                            src={selectedDoctor.image || selectedDoctor.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedDoctor.name)}&size=128`}
+                                            src={(() => { const img = selectedDoctor.image || selectedDoctor.avatar; if (!img) return `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedDoctor.name)}&size=128`; return img.startsWith('http') ? img : `/storage/${img}`; })()}
                                             alt={selectedDoctor.name}
                                             className="w-24 h-24 rounded-full object-cover relative z-10 border-4 border-white dark:border-gray-800 shadow-md mx-auto"
                                         />

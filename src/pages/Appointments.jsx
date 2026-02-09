@@ -126,10 +126,11 @@ export default function Appointments() {
                                 <div className="flex items-start gap-4">
                                     <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
                                         <img
-                                            src={
-                                                (isDoctor ? apt.patient?.avatar : apt.doctor?.avatar) ||
-                                                `https://ui-avatars.com/api/?name=${encodeURIComponent((isDoctor ? apt.patient?.name : apt.doctor?.name) || 'User')}&background=random`
-                                            }
+                                            src={(() => {
+                                                const avatar = isDoctor ? apt.patient?.avatar : apt.doctor?.avatar;
+                                                if (!avatar) return `https://ui-avatars.com/api/?name=${encodeURIComponent((isDoctor ? apt.patient?.name : apt.doctor?.name) || 'User')}&background=random`;
+                                                return avatar.startsWith('http') ? avatar : `/storage/${avatar}`;
+                                            })()}
                                             alt={isDoctor ? apt.patient?.name : apt.doctor?.name}
                                             className="w-full h-full object-cover"
                                         />

@@ -265,7 +265,7 @@ export default function Learn() {
                         <div className="card overflow-hidden grid md:grid-cols-5 bg-black rounded-2xl">
                             <div className="md:col-span-3 relative aspect-video md:aspect-auto">
                                 <img
-                                    src={featuredVideo.thumbnail_url || featuredVideo.thumbnail}
+                                    src={featuredVideo.thumbnail_url || (featuredVideo.thumbnail && !featuredVideo.thumbnail.startsWith('http') ? `/storage/${featuredVideo.thumbnail}` : featuredVideo.thumbnail)}
                                     alt={featuredVideo.title}
                                     className="w-full h-full object-cover opacity-80"
                                 />
@@ -370,7 +370,7 @@ export default function Learn() {
                     >
                         <div className="aspect-video relative overflow-hidden">
                             <img
-                                src={video.thumbnail_url || video.thumbnail}
+                                src={video.thumbnail_url || (video.thumbnail && !video.thumbnail.startsWith('http') ? `/storage/${video.thumbnail}` : video.thumbnail)}
                                 alt={video.title}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
